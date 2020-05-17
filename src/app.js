@@ -4,10 +4,10 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
-const Service = require('./service');
-const logger = require('./logger');
-const Router = require('./router');
-const { NODE_ENV, API_TOKEN } = require('./config');
+const AllRouter = require('./route-all/all-router');
+const UserRouter = require('./route-build/build-router');
+const AuthRouter = require('./auth/auth-router');
+const { NODE_ENV} = require('./config');
 
 
 const app = express();
@@ -22,26 +22,11 @@ app.use(morgan(morganOption));
 app.use(helmet());
 app.use(cors());
 
-app.use(function requireAuth(req, res, next) {
-  const authValue = req.get('Authorization') || ' ';
-
-  //verify bearer
-  if (!authValue.toLowerCase().startsWith('bearer')) {
-    return res.status(400).json({ error: 'Missing bearer token' });
-  }
-
-  const token = authValue.split(' ')[1];
-
-  if (token !== API_TOKEN) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-
-  next();
-});
-
 // server requests
 
-app.use('/api', Router);
+app.use('/api/all', AllRouter);
+app.use('/api/user', UserRouter);
+app.use('/api/auth', AuthRouter);
 
 // errorHandler middleware
 
