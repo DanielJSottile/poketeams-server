@@ -1,34 +1,35 @@
 const BuildService = {
 
-  getUser(db, id){
+  getUser(db, user_id){
     return db
       .select()
       .from('users')
-      .where('id', id);
+      .where('id', `${user_id}`);
   },
 
-  getUserFolders(db) {
+  getUserFolders(db, user_id) {
     return db
       .select()
-      .from('users')
-      .join('folders', 'users.id', '=', 'folders.user_id');
+      .from('folders')
+      //.join('folders', 'users.id', '=', 'folders.user_id')
+      .where('user_id', '=', `${user_id}`);
   },
 
-  getUserTeams(db) {
+  getUserTeams(db, user_id) {
     return db
       .select()
-      .from('users')
-      .join('folders', 'users.id', '=', 'folders.user_id')
-      .join('teams', 'folder.id', '=', 'teams.folder_id');
+      .from('folders')
+      .join('teams', 'folders.id', '=', 'teams.folder_id')
+      .where('folders.user_id', '=', `${user_id}`);
   },
 
-  getUserSets(db) {
+  getUserSets(db, user_id) {
     return db
       .select()
-      .from('users')
-      .join('folders', 'users.id', '=', 'folders.user_id')
-      .join('teams', 'folder.id', '=', 'teams.folder_id')
-      .join('sets', 'team.id', '=', 'sets.team_id');
+      .from('folders')
+      .join('teams', 'folders.id', '=', 'teams.folder_id')
+      .join('sets', 'teams.id', '=', 'sets.team_id')
+      .where('folders.user_id', '=', `${user_id}`);
   },
 
   postUser(db) {

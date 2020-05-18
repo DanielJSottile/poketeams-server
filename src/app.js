@@ -25,7 +25,7 @@ app.use(cors());
 // server requests
 
 app.use('/api/all', AllRouter);
-app.use('/api/user', UserRouter);
+app.use('/api/build', UserRouter);
 app.use('/api/auth', AuthRouter);
 
 // errorHandler middleware
