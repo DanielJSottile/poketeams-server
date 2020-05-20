@@ -17,7 +17,7 @@ const sanitizeSet = set => ({
 
 });
 
-AllRouter
+AllRouter // get 10 public teams, default upon loading
   .route('/')
   .get((req, res, next) => {
     const page = Number(req.query.page);
@@ -37,7 +37,27 @@ AllRouter
       .catch(next);
   });
 
-AllRouter
+AllRouter // get the SETS for 10 public teams, default upon loading?
+  .route('/sets')
+  .get((req, res, next) => {
+    const page = Number(req.query.page);
+    AllService.getSetsOfTenTeamsDefault(req.app.get('db'), page)
+      .then(sets => {
+        if (!sets) {
+          logger.error('Failed get teams!');
+          return res.status(404).json({
+            error: { message: 'There Are No Teams' }
+          });
+        }
+        logger.info(
+          'Successful get 10 teams!'
+        );
+        res.json(sets);
+      })
+      .catch(next);
+  });
+
+AllRouter // get the likes for an individual team;  will need to be used in conjunction or seperately.
   .route('/:team_id/likes')
   .get((req, res, next) => {
     const {team_id} = req.params;
@@ -57,7 +77,7 @@ AllRouter
       .catch(next);
   });
 
-AllRouter
+AllRouter // get 10 teams with a search
   .route('/search')
   .get((req, res, next) => {
     const page = Number(req.query.page);
@@ -104,7 +124,8 @@ AllRouter
   .route('/:team_id/:set_id')
   .get((req, res, next) => {
     const {set_id} = req.params;
-    AllService.getSetById(req.app.get('db'), set_id)
+    const {team_id} = req.params;
+    AllService.getSetById(req.app.get('db'), set_id, team_id)
       .then(set => {
         if (!set) {
           logger.error(`Failed get set with id: ${set_id}`);
