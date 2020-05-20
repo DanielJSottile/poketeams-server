@@ -18,6 +18,46 @@ const sanitizeSet = set => ({
 });
 
 AllRouter
+  .route('/')
+  .get((req, res, next) => {
+    const page = Number(req.query.page);
+    AllService.getTenTeamsDefault(req.app.get('db'), page)
+      .then(teams => {
+        if (!teams) {
+          logger.error('Failed get teams!');
+          return res.status(404).json({
+            error: { message: 'There Are No Teams' }
+          });
+        }
+        logger.info(
+          'Successful get 10 teams!'
+        );
+        res.json(teams);
+      })
+      .catch(next);
+  });
+
+AllRouter
+  .route('/:team_id/likes')
+  .get((req, res, next) => {
+    const {team_id} = req.params;
+    AllService.getLikesforATeam(req.app.get('db'), team_id)
+      .then(likes => {
+        if (!likes) {
+          logger.error('Failed get likes for teams!');
+          return res.status(404).json({
+            error: { message: 'There are no teams to like' }
+          });
+        }
+        logger.info(
+          'Successful get likes for 10 teams!'
+        );
+        res.json(likes);
+      })
+      .catch(next);
+  });
+
+AllRouter
   .route('/search')
   .get((req, res, next) => {
     const page = Number(req.query.page);

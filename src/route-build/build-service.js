@@ -1,11 +1,11 @@
 const BuildService = {
 
-  getUser(db, user_id){
-    return db
-      .select()
-      .from('users')
-      .where('id', `${user_id}`);
-  },
+  // getUser(db, user_id){
+  //   return db
+  //     .select()
+  //     .from('users')
+  //     .where('id', `${user_id}`);
+  // },
 
   getUserFolders(db, user_id) {
     return db
@@ -30,10 +30,6 @@ const BuildService = {
       .join('teams', 'folders.id', '=', 'teams.folder_id')
       .join('sets', 'teams.id', '=', 'sets.team_id')
       .where('folders.user_id', '=', `${user_id}`);
-  },
-
-  postUser(db) {
-    
   },
 
   postUserFolder(db, newFolder) {
