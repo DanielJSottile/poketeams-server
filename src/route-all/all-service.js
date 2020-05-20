@@ -73,7 +73,6 @@ const AllService = {
     const offset = teamsAmt * (page - 1);
     return db
       .from('teams')
-      .join('sets', 'sets.team_id', '=', 'teams.id')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
       .rightJoin('users', 'users.id', '=', 'folders.user_id')
       .select('teams.id',

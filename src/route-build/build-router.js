@@ -138,4 +138,73 @@ BuildRouter
       .catch(next);
   });
 
+BuildRouter
+  .route('/folders/:user_id/filter/')
+  .all(requireAuth)
+  .get((req, res, next) => {
+    const {user_id} = req.params;
+    const sort = req.query.sort;
+    const species = req.query.species;
+    BuildService.getUserFoldersFilter(req.app.get('db'), user_id, sort, species)
+      .then(folders => {
+        if (!folders) {
+          logger.error('Failed get folders!');
+          return res.status(404).json({
+            error: { message: 'There Are No Folders' }
+          });
+        }
+        logger.info(
+          'Successful get the folders!'
+        );
+        res.json(folders);
+      })
+      .catch(next);
+  });
+
+BuildRouter
+  .route('/teams/:user_id/filter/')
+  .all(requireAuth)
+  .get((req, res, next) => {
+    const {user_id} = req.params;
+    const sort = req.query.sort;
+    const species = req.query.species;
+    BuildService.getUserTeamsFilter(req.app.get('db'), user_id, sort, species)
+      .then(teams=> {
+        if (!teams) {
+          logger.error('Failed get teams!');
+          return res.status(404).json({
+            error: { message: 'There Are No Teams' }
+          });
+        }
+        logger.info(
+          'Successful get the folders!'
+        );
+        res.json(teams);
+      })
+      .catch(next);
+  });
+
+BuildRouter
+  .route('/sets/:user_id/filter/')
+  .all(requireAuth)
+  .get((req, res, next) => {
+    const {user_id} = req.params;
+    const sort = req.query.sort;
+    const species = req.query.species;
+    BuildService.getUserSetsFilter(req.app.get('db'), user_id, sort, species)
+      .then(sets => {
+        if (!sets) {
+          logger.error('Failed get sets!');
+          return res.status(404).json({
+            error: { message: 'There Are No sets' }
+          });
+        }
+        logger.info(
+          'Successful get the folders!'
+        );
+        res.json(sets);
+      })
+      .catch(next);
+  });
+
 module.exports = BuildRouter;
