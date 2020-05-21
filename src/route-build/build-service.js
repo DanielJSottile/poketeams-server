@@ -103,17 +103,20 @@ const BuildService = {
     }
 
     return db
+      .distinct('folders.id')
       .select(
-        'folders.id as id',
+        'folders.id',
         'folder_name',
         'user_id',
         'folders.date_created',
         'folders.date_modified'
       )
-      .from('users')
-      .join('folders', 'folders.user_id', '=', 'users.id')
-      .join('teams', 'teams.folder_id', '=', 'folders.id')
+      
+      .from('teams')
       .join('sets', 'sets.team_id', '=', 'teams.id')
+      .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
+      .rightJoin('users', 'users.id', '=', 'folders.user_id')
+      
       .whereNotNull('teams.id')
       .where('users.id', '=', `${user_id}`)
       .where(speciesVar[0], speciesVar[1], speciesVar[2]) // find something better than this later
@@ -154,7 +157,7 @@ const BuildService = {
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
       .rightJoin('users', 'users.id', '=', 'folders.user_id')
       .distinct('team_id')
-      .select('sets.team_id',
+      .select('sets.team_id as id',
         'team_name',
         'description',
         'teams.date_created',

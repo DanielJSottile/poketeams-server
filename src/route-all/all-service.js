@@ -191,11 +191,11 @@ const AllService = {
 
     return db
       .from('teams')
+      .distinct('sets.team_id')
       .join('sets', 'sets.team_id', '=', 'teams.id')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
       .rightJoin('users', 'users.id', '=', 'folders.user_id')
-      .distinct('team_id')
-      .select('sets.team_id',
+      .select('teams.id',
         'team_name',
         'description',
         'teams.date_created',
