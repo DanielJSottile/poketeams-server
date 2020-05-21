@@ -153,7 +153,8 @@ const BuildService = {
       .join('sets', 'sets.team_id', '=', 'teams.id')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
       .rightJoin('users', 'users.id', '=', 'folders.user_id')
-      .select('teams.id',
+      .distinct('team_id')
+      .select('sets.team_id',
         'team_name',
         'description',
         'teams.date_created',
