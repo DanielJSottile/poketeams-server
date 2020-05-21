@@ -1,11 +1,6 @@
 const BuildService = {
 
-  // getUser(db, user_id){
-  //   return db
-  //     .select()
-  //     .from('users')
-  //     .where('id', `${user_id}`);
-  // },
+  // GET
 
   getUserFolders(db, user_id) {
     return db
@@ -248,6 +243,8 @@ const BuildService = {
       .where(speciesVar[0], speciesVar[1], speciesVar[2]) // find something better than this later
       .orderBy(sortVar[0], sortVar[1], sortVar[2]);
   },
+
+  // POST
 
   postUserFolder(db, newFolder) {
     return db.insert(newFolder).into('folders').returning('*').then(rows => rows[0]);

@@ -77,6 +77,26 @@ AllRouter // get the likes for an individual team;  will need to be used in conj
       .catch(next);
   });
 
+AllRouter // get the sets for an individual team, used for the public view
+  .route('/:team_id/sets')
+  .get((req, res, next) => {
+    const {team_id} = req.params;
+    AllService.getSetsForIndividualTeam(req.app.get('db'), team_id)
+      .then(sets => {
+        if (!sets) {
+          logger.error('Failed get sets for teams!');
+          return res.status(404).json({
+            error: { message: 'There probably isnt this team' }
+          });
+        }
+        logger.info(
+          'Successful get sets for individual team!'
+        );
+        res.json(sets);
+      })
+      .catch(next);
+  });
+
 AllRouter // get 10 teams with a search
   .route('/search')
   .get((req, res, next) => {
