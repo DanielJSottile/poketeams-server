@@ -34,6 +34,22 @@ BuildRouter
         res.status(201).json(folder);
       })
       .catch(next);
+  })
+  .patch(dataParser, (req, res, next) => { // this works!
+    const {id} = req.body;
+    const { folder_name } = req.body;
+    const folderUpdate = {folder_name: folder_name};
+
+    for (const [key, value] of Object.entries(folderUpdate))
+      if (value == null) {
+        return res.status(400).json({error: `Missing '${key}' in request body`});
+      }
+
+    BuildService.patchUserFolder(req.app.get('db'), id, folderUpdate)
+      .then(() => {
+        res.status(204);
+      })
+      .catch(next);
   });
 
 BuildRouter
@@ -56,6 +72,17 @@ BuildRouter
         res.status(201).json(set);
       })
       .catch(next);
+  })
+  .patch(dataParser, (req, res, next) => { 
+    const body = req.body;
+    const id = body.id;
+    const teamUpdate = {team_name: body.team_name, description: body.description};
+
+    BuildService.patchUserTeam(req.app.get('db'), id, teamUpdate)
+      .then(() => {
+        res.status(204);
+      })
+      .catch(next);
   });
 
 BuildRouter
@@ -73,6 +100,44 @@ BuildRouter
     BuildService.postUserSet(req.app.get('db'), newSet)
       .then(set => {
         res.status(201).json(set);
+      })
+      .catch(next);
+  })
+  .patch(dataParser, (req, res, next) => { 
+    const body = req.body;
+    const id = body.id;
+
+    const setUpdate = {
+      nickname: body.nickname,
+      species: body.species,
+      gender: body.gender,
+      item: body.item,
+      ability: body.ability,
+      level: body.level,
+      shiny: body.shiny,
+      happiness: body.happiness,
+      nature: body.nature,
+      hp_ev: body.hp_ev,
+      atk_ev: body.atk_ev,
+      def_ev: body.def_ev,
+      spa_ev: body.spa_ev,
+      spd_ev: body.spd_ev,
+      spe_ev: body.spe_ev,
+      hp_iv: body.hp_iv,
+      atk_iv: body.atk_iv,
+      def_iv: body.def_iv,
+      spa_iv: body.spa_iv,
+      spd_iv: body.spd_iv,
+      spe_iv: body.spe_iv,
+      move_one: body.move_one,
+      move_two: body.move_two,
+      move_three: body.move_three,
+      move_four: body.move_four,
+    };
+
+    BuildService.patchUserSet(req.app.get('db'), id, setUpdate)
+      .then(() => {
+        res.status(204);
       })
       .catch(next);
   });
