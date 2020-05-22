@@ -2,6 +2,13 @@ const BuildService = {
 
   // GET
 
+  getSingleUserFolderById(db, folder_id) {
+    return db
+      .select()
+      .from('folders')
+      .where('folders.id', '=', `${folder_id}`);
+  },
+
   getUserFolders(db, user_id) {
     return db
       .select()
@@ -283,15 +290,16 @@ const BuildService = {
   // },
 
   deleteUserFolder(db, id) {
-    return db('folders').where({ id }).del();
+    return db('folders').where('folders.id', '=', `${id}`).del();
   },
 
+
   deleteUserTeam(db, id) {
-    return db('teams').where({ id }).del();
+    return db('teams').where('teams.id', '=', `${id}`).del();
   },
 
   deleteUserSet(db, id) {
-    return db('sets').where({ id }).del();
+    return db('sets').where('sets.id', '=', `${id}`).del();
   }
 
 };

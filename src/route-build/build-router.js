@@ -4,11 +4,41 @@ const xss = require('xss');
 const BuildRouter = express.Router();
 const dataParser = express.json();
 const BuildService = require('./build-service');
+const AllService = require('../route-all/all-service');
 const {requireAuth} = require('../middleware/jwt-auth');
 
 const serialize = item => ({
   
 });
+
+BuildRouter
+  .route('/folder/:folder_id')
+  .all(requireAuth)
+  .get((req, res, next) => { // this works!
+    const {folder_id} = req.params;
+    BuildService.getSingleUserFolderById(req.app.get('db'), folder_id)
+      .then(folder => res.json(folder)).catch(next);
+  })
+  .delete((req, res, next) => {
+    const {folder_id} = req.params;
+    BuildService.getSingleUserFolderById(req.app.get('db'), folder_id)
+      .then(folder => {
+        if (!folder) {
+          logger.error(`Failed get delete with id: ${folder_id}`);
+          return res.status(404).json({
+            error: { message: 'Folder doesn\'t exist' }
+          });
+        }
+        BuildService.deleteUserFolder(req.app.get('db'), folder_id)
+          .then(() => {
+            logger.info(
+              'Successful delete : Folder was deleted'
+            );
+            res.status(204);
+          })
+          .catch(next);
+      });
+  });
 
 BuildRouter
   .route('/folders/:user_id')
@@ -86,6 +116,30 @@ BuildRouter
   });
 
 BuildRouter
+  .route('/team/:team_id')
+  .all(requireAuth)
+  .delete((req, res, next) => {
+    const {team_id} = req.params;
+    AllService.getTeamById(req.app.get('db'), Number(team_id))
+      .then(team => {
+        if (!team) {
+          logger.error(`Failed get delete with id: ${team_id}`);
+          return res.status(404).json({
+            error: { message: 'Team doesn\'t exist' }
+          });
+        }
+        BuildService.deleteUserTeam(req.app.get('db'), Number(team_id))
+          .then(() => {
+            logger.info(
+              'Successful delete : Team was deleted'
+            );
+            res.status(204);
+          });
+      })
+      .catch(next);
+  });
+
+BuildRouter
   .route('/sets/:user_id')
   .all(requireAuth)
   .get((req, res, next) => { // this works!
@@ -138,6 +192,33 @@ BuildRouter
     BuildService.patchUserSet(req.app.get('db'), id, setUpdate)
       .then(() => {
         res.status(204);
+      })
+      .catch(next);
+  });
+
+BuildRouter
+  .route('/set/:team_id/:set_id')
+  .all(requireAuth)
+  .delete((req, res, next) => {
+    const { set_id } = req.params;
+    const { team_id } = req.params;
+    AllService.getSetById(req.app.get('db'), Number(set_id), Number(team_id))
+      .then(set => {
+        console.log(set_id);
+        console.log(team_id);
+        if (!set) {
+          logger.error(`Failed get delete with id: ${set_id}`);
+          return res.status(404).json({
+            error: { message: 'Set doesn\'t exist' }
+          });
+        }
+        BuildService.deleteUserTeam(req.app.get('db'), Number(set_id))
+          .then(() => {
+            logger.info(
+              'Successful delete : Set was deleted'
+            );
+            res.status(204);
+          });
       })
       .catch(next);
   });
