@@ -300,7 +300,7 @@ const BuildService = {
 
   deleteUserSet(db, id) {
     return db('sets').where('sets.id', '=', `${id}`).del();
-  }
+  },
 
 };
 

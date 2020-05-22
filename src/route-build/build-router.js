@@ -213,11 +213,12 @@ BuildRouter
           });
         }
         BuildService.deleteUserTeam(req.app.get('db'), Number(set_id))
-          .then(() => {
+          .then((thing) => {
+            console.log(thing);
             logger.info(
               'Successful delete : Set was deleted'
             );
-            res.status(204);
+            res.status(200);
           });
       })
       .catch(next);
