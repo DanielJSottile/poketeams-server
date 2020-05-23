@@ -196,7 +196,7 @@ BuildRouter
       .catch(next);
   });
 
-BuildRouter
+BuildRouter // DELETE CURRENTLY NOT WORKING
   .route('/set/:team_id/:set_id')
   .all(requireAuth)
   .delete((req, res, next) => {
