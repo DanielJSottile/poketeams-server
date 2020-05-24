@@ -306,8 +306,6 @@ BuildRouter
       .catch(next);
   });
 
-
-// DELETE CURRENTLY NOT WORKING, try moving it...
 BuildRouter 
   .route('/set/:team_id/:set_id') // delete a set by id
   .all(requireAuth)
@@ -316,21 +314,18 @@ BuildRouter
     const { team_id } = req.params;
     AllService.getSetById(req.app.get('db'), Number(set_id), Number(team_id))
       .then(set => {
-        console.log(set_id);
-        console.log(team_id);
         if (!set) {
           logger.error(`Failed get delete with id: ${set_id}`);
           return res.status(404).json({
             error: { message: 'Set doesn\'t exist' }
           });
         }
-        BuildService.deleteUserTeam(req.app.get('db'), Number(set_id))
-          .then((thing) => {
-            console.log(thing);
+        BuildService.deleteUserSet(req.app.get('db'), Number(set_id))
+          .then(() => {
             logger.info(
               'Successful delete : Set was deleted'
             );
-            res.status(200);
+            res.status(204).end();
           });
       })
       .catch(next);
