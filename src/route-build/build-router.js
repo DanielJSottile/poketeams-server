@@ -7,17 +7,77 @@ const BuildService = require('./build-service');
 const AllService = require('../route-all/all-service');
 const {requireAuth} = require('../middleware/jwt-auth');
 
-const serialize = item => ({
-  
+// Sanitization
+
+const sanitizeFolder = folder => ({
+  id: folder.id,
+  folder_name: xss(folder.folder_name),
+  user_id: folder.user_id,
+  date_created: xss(folder.date_created),
+  date_modified: xss(folder.date_modified)
 });
 
+const sanitizeTeam = team => ({
+  id: team.id,
+  team_name: xss(team.team_name),
+  description: xss(team.description),
+  date_created: xss(team.date_created),
+  date_modified: xss(team.date_modified),
+  user_id: team.user_id,
+  user_name: xss(team.user_name),
+  folder_id: team.folder_id,
+  folder_name: xss(team.folder_name),
+});
+
+const sanitizeSet = set => ({
+  id: set.id,
+  team_name: xss(set.team_name),
+  description: xss(set.description),
+  date_created: xss(set.date_created),
+  date_modified: xss(set.date_modified),
+  user_id: set.user_id,
+  user_name: xss(set.user_name),
+  folder_id: set.folder_id,
+  folder_name: xss(set.folder_name),
+  nickname: xss(set.nickname),
+  species: xss(set.species),
+  gender: xss(set.species),
+  item: xss(set.item),
+  ability: xss(set.ability),
+  level: xss(set.level),
+  shiny: set.shiny,
+  happiness: xss(set.happiness),
+  nature: xss(set.nature),
+  hp_ev: xss(set.hp_ev),
+  atk_ev: xss(set.atk_ev),
+  def_ev: xss(set.def_ev),
+  spa_ev: xss(set.spa_ev),
+  spd_ev: xss(set.spd_ev),
+  spe_ev: xss(set.spe_ev),
+  hp_iv: xss(set.hp_iv),
+  atk_iv: xss(set.atk_iv),
+  def_iv: xss(set.def_iv),
+  spa_iv: xss(set.spa_iv),
+  spd_iv: xss(set.spd_iv),
+  spe_iv: xss(set.spe_iv),
+  move_one: xss(set.move_one),
+  move_two: xss(set.move_two),
+  move_three: xss(set.move_three),
+  move_four: xss(set.move_four),
+  team_id: set.team_id
+});
+
+// Build Route
+
+// Folders
+
 BuildRouter
-  .route('/folder/:folder_id')
+  .route('/folder/:folder_id') // Get a single Folder by ID
   .all(requireAuth)
-  .get((req, res, next) => { // this works!
+  .get((req, res, next) => {
     const {folder_id} = req.params;
     BuildService.getSingleUserFolderById(req.app.get('db'), folder_id)
-      .then(folder => res.json(folder)).catch(next);
+      .then(folder => res.json(sanitizeFolder(folder))).catch(next);
   })
   .delete((req, res, next) => {
     const {folder_id} = req.params;
@@ -41,14 +101,14 @@ BuildRouter
   });
 
 BuildRouter
-  .route('/folders/:user_id')
+  .route('/folders/:user_id') // Get the users folders, or post/patch a folder to here.
   .all(requireAuth)
-  .get((req, res, next) => { // this works!
+  .get((req, res, next) => { 
     const {user_id} = req.params;
     BuildService.getUserFolders(req.app.get('db'), user_id)
-      .then(folders => res.json(folders)).catch(next);
+      .then(folders => res.json(folders.map(folder => sanitizeFolder(folder)))).catch(next);
   })
-  .post(dataParser, (req, res, next) => { // this works!
+  .post(dataParser, (req, res, next) => {
     const {user_id} = req.body;
     const { folder_name } = req.body;
     const newFolder = { folder_name, user_id };
@@ -61,11 +121,11 @@ BuildRouter
 
     BuildService.postUserFolder(req.app.get('db'), newFolder)
       .then(folder => {
-        res.status(201).json(folder);
+        res.status(201).json(sanitizeFolder(folder));
       })
       .catch(next);
   })
-  .patch(dataParser, (req, res, next) => { // this works!
+  .patch(dataParser, (req, res, next) => {
     const {id} = req.body;
     const { folder_name } = req.body;
     const folderUpdate = {folder_name: folder_name};
@@ -83,12 +143,37 @@ BuildRouter
   });
 
 BuildRouter
-  .route('/teams/:user_id')
+  .route('/folders/:user_id/filter/') // get user folders when filtered
   .all(requireAuth)
-  .get((req, res, next) => { // this works!
+  .get((req, res, next) => {
+    const {user_id} = req.params;
+    const sort = req.query.sort;
+    const species = req.query.species;
+    BuildService.getUserFoldersFilter(req.app.get('db'), user_id, sort, species)
+      .then(folders => {
+        if (!folders) {
+          logger.error('Failed get folders!');
+          return res.status(404).json({
+            error: { message: 'There Are No Folders' }
+          });
+        }
+        logger.info(
+          'Successful get the folders!'
+        );
+        res.json(folders.map(folder => sanitizeFolder(folder)));
+      })
+      .catch(next);
+  });
+
+// Teams
+
+BuildRouter
+  .route('/teams/:user_id') // get user teams, post/patch new team
+  .all(requireAuth)
+  .get((req, res, next) => {
     const {user_id} = req.params;
     BuildService.getUserTeams(req.app.get('db'), user_id)
-      .then(teams => res.json(teams));
+      .then(teams => res.json(teams.map(team => sanitizeTeam(team))));
   })
   .post(dataParser, (req, res, next) => {
     const newTeam = req.body;
@@ -98,8 +183,8 @@ BuildRouter
       }
 
     BuildService.postUserTeam(req.app.get('db'), newTeam)
-      .then(set => {
-        res.status(201).json(set);
+      .then(team => {
+        res.status(201).json(sanitizeTeam(team));
       })
       .catch(next);
   })
@@ -116,7 +201,7 @@ BuildRouter
   });
 
 BuildRouter
-  .route('/team/:team_id')
+  .route('/team/:team_id') // delete a single team
   .all(requireAuth)
   .delete((req, res, next) => {
     const {team_id} = req.params;
@@ -140,12 +225,37 @@ BuildRouter
   });
 
 BuildRouter
-  .route('/sets/:user_id')
+  .route('/teams/:user_id/filter/') // get the user teams when filtered
   .all(requireAuth)
-  .get((req, res, next) => { // this works!
+  .get((req, res, next) => {
+    const {user_id} = req.params;
+    const sort = req.query.sort;
+    const species = req.query.species;
+    BuildService.getUserTeamsFilter(req.app.get('db'), user_id, sort, species)
+      .then(teams=> {
+        if (!teams) {
+          logger.error('Failed get teams!');
+          return res.status(404).json({
+            error: { message: 'There Are No Teams' }
+          });
+        }
+        logger.info(
+          'Successful get the folders!'
+        );
+        res.json(teams.map(team => sanitizeTeam(team)));
+      })
+      .catch(next);
+  });
+
+// Sets
+
+BuildRouter
+  .route('/sets/:user_id') // get the user sets, post/patch a set
+  .all(requireAuth)
+  .get((req, res, next) => {
     const {user_id} = req.params;
     BuildService.getUserSets(req.app.get('db'), user_id)
-      .then(sets => res.json(sets));
+      .then(sets => res.json(sets.map(set => sanitizeSet(set))));
   })
   .post(dataParser, (req, res, next) => {
     const newSet = req.body;
@@ -153,7 +263,7 @@ BuildRouter
 
     BuildService.postUserSet(req.app.get('db'), newSet)
       .then(set => {
-        res.status(201).json(set);
+        res.status(201).json(sanitizeSet(set));
       })
       .catch(next);
   })
@@ -196,8 +306,10 @@ BuildRouter
       .catch(next);
   });
 
-BuildRouter // DELETE CURRENTLY NOT WORKING
-  .route('/set/:team_id/:set_id')
+
+// DELETE CURRENTLY NOT WORKING, try moving it...
+BuildRouter 
+  .route('/set/:team_id/:set_id') // delete a set by id
   .all(requireAuth)
   .delete((req, res, next) => {
     const { set_id } = req.params;
@@ -225,53 +337,7 @@ BuildRouter // DELETE CURRENTLY NOT WORKING
   });
 
 BuildRouter
-  .route('/folders/:user_id/filter/')
-  .all(requireAuth)
-  .get((req, res, next) => {
-    const {user_id} = req.params;
-    const sort = req.query.sort;
-    const species = req.query.species;
-    BuildService.getUserFoldersFilter(req.app.get('db'), user_id, sort, species)
-      .then(folders => {
-        if (!folders) {
-          logger.error('Failed get folders!');
-          return res.status(404).json({
-            error: { message: 'There Are No Folders' }
-          });
-        }
-        logger.info(
-          'Successful get the folders!'
-        );
-        res.json(folders);
-      })
-      .catch(next);
-  });
-
-BuildRouter
-  .route('/teams/:user_id/filter/')
-  .all(requireAuth)
-  .get((req, res, next) => {
-    const {user_id} = req.params;
-    const sort = req.query.sort;
-    const species = req.query.species;
-    BuildService.getUserTeamsFilter(req.app.get('db'), user_id, sort, species)
-      .then(teams=> {
-        if (!teams) {
-          logger.error('Failed get teams!');
-          return res.status(404).json({
-            error: { message: 'There Are No Teams' }
-          });
-        }
-        logger.info(
-          'Successful get the folders!'
-        );
-        res.json(teams);
-      })
-      .catch(next);
-  });
-
-BuildRouter
-  .route('/sets/:user_id/filter/')
+  .route('/sets/:user_id/filter/') // gets the user sets when filtered
   .all(requireAuth)
   .get((req, res, next) => {
     const {user_id} = req.params;
@@ -288,7 +354,7 @@ BuildRouter
         logger.info(
           'Successful get the folders!'
         );
-        res.json(sets);
+        res.json(sets.map(set => sanitizeSet(set)));
       })
       .catch(next);
   });

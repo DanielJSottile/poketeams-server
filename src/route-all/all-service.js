@@ -158,32 +158,31 @@ const AllService = {
 
   // We took out the get sets for 10 teams, because the other one is chained.
 
-  
-  getTenTeamsWithSearch(db, page, sort, species) { // GET search?page=1&sort=none&species=all 
-    if (species === 'all') {
-      console.log(page);
+  // Why is this not working again???
+  getTenTeamsWithSearch(db, page, sort, species) { // GET search?page=1&sort=newest&species=all 
+    if (species === 'all' || species === '') {
       const teamsAmt = 10;
       const offset = teamsAmt * (page - 1);
       let sortVar = [];
 
       switch(sort) {
       case 'newest':
-        sortVar = ['sets.team_id', '=', 'asc'];
+        sortVar = ['sets.team_id', 'desc'];
         break;
       case 'oldest':
-        sortVar = ['sets.team_id', '=', 'desc'];
+        sortVar = ['sets.team_id', 'asc'];
         break;
       case 'alphabetical':
-        sortVar = ['teams.team_name', '=', 'asc'];
+        sortVar = ['team_name', 'asc'];
         break;
       case 'rev alphabetical':
-        sortVar = ['teams.team_name', '=', 'desc'];
+        sortVar = ['team_name', 'desc'];
         break;
       case 'most likes':
         sortVar = ('do not know yet'); // do not know yet
         break;
       default:
-        sortVar = ['sets.team_id', '=', 'asc'];
+        sortVar = ['sets.team_id', 'desc'];
       }
 
       return db
@@ -203,7 +202,7 @@ const AllService = {
           'folder_name'
         )
         .whereNotNull('teams.id')
-        .orderBy(sortVar[0], sortVar[1], sortVar[2])
+        .orderBy(sortVar[0], sortVar[1])
         .limit(`${teamsAmt}`)
         .offset(`${offset}`);
     } else {
@@ -214,22 +213,22 @@ const AllService = {
 
       switch(sort) {
       case 'newest':
-        sortVar = ['sets.team_id', '=', 'asc'];
+        sortVar = ['sets.team_id', 'desc'];
         break;
       case 'oldest':
-        sortVar = ['sets.team_id', '=', 'desc'];
+        sortVar = ['sets.team_id', 'asc'];
         break;
       case 'alphabetical':
-        sortVar = ['teams.team_name', '=', 'asc'];
+        sortVar = ['team_name', 'asc'];
         break;
       case 'rev alphabetical':
-        sortVar = ['teams.team_name', '=', 'desc'];
+        sortVar = ['team_name', 'desc'];
         break;
       case 'most likes':
         sortVar = ('do not know yet'); // do not know yet
         break;
       default:
-        sortVar = ['sets.team_id', '=', 'asc'];
+        sortVar = ['sets.team_id', 'desc'];
       }
 
       return db
@@ -250,7 +249,7 @@ const AllService = {
         )
         .whereNotNull('teams.id')
         .where(speciesVar[0], speciesVar[1], speciesVar[2])
-        .orderBy(sortVar[0], sortVar[1], sortVar[2])
+        .orderBy(sortVar[0], sortVar[1])
         .limit(`${teamsAmt}`)
         .offset(`${offset}`);
     }

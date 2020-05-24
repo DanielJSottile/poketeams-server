@@ -136,22 +136,22 @@ const BuildService = {
 
     switch(sort) {
     case 'newest':
-      sortVar = ['teams.date_created', '=', 'asc'];
+      sortVar = ['sets.team_id', 'desc'];
       break;
     case 'oldest':
-      sortVar = ['teams.date_created', '=', 'desc'];
+      sortVar = ['sets.team_id', 'asc'];
       break;
     case 'alphabetical':
-      sortVar = ['teams.team_name', '=', 'asc'];
+      sortVar = ['team_name', 'asc'];
       break;
     case 'rev alphabetical':
-      sortVar = ['teams.team_name', '=', 'desc'];
+      sortVar = ['team_name', 'desc'];
       break;
     case 'most likes':
       sortVar = ('do not know yet'); // do not know yet
       break;
     default:
-      sortVar = ['teams.date_created', '=', 'desc'];
+      sortVar = ['sets.team_id', 'desc'];
     }
 
     if(species !== 'all'){
@@ -177,7 +177,7 @@ const BuildService = {
       .whereNotNull('teams.id')
       .where('folders.user_id', '=', `${user_id}`)
       .where(speciesVar[0], speciesVar[1], speciesVar[2]) // find something better than this later
-      .orderBy(sortVar[0], sortVar[1], sortVar[2]);
+      .orderBy(sortVar[0], sortVar[1]);
   },
 
   getUserSetsFilter(db, user_id, sort, species){
@@ -186,22 +186,22 @@ const BuildService = {
 
     switch(sort) {
     case 'newest':
-      sortVar = ['teams.date_created', '=', 'asc'];
+      sortVar = ['sets.team_id', 'desc'];
       break;
     case 'oldest':
-      sortVar = ['teams.date_created', '=', 'desc'];
+      sortVar = ['sets.team_id', 'asc'];
       break;
     case 'alphabetical':
-      sortVar = ['teams.team_name', '=', 'asc'];
+      sortVar = ['team_name', 'asc'];
       break;
     case 'rev alphabetical':
-      sortVar = ['teams.team_name', '=', 'desc'];
+      sortVar = ['team_name', 'desc'];
       break;
     case 'most likes':
       sortVar = ('do not know yet'); // do not know yet
       break;
     default:
-      sortVar = ['teams.date_created', '=', 'desc'];
+      sortVar = ['sets.team_id', 'desc'];
     }
 
     if(species !== 'all'){
@@ -252,7 +252,7 @@ const BuildService = {
       .whereNotNull('teams.id')
       .where('folders.user_id', '=', `${user_id}`)
       .where(speciesVar[0], speciesVar[1], speciesVar[2]) // find something better than this later
-      .orderBy(sortVar[0], sortVar[1], sortVar[2]);
+      .orderBy(sortVar[0], sortVar[1]);
   },
 
   // POST
