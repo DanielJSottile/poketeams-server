@@ -114,6 +114,7 @@ BuildRouter
     const newFolder = { folder_name, user_id };
 
     for (const [key, value] of Object.entries(newFolder))
+      // eslint-disable-next-line eqeqeq
       if (value == null) {
         return res.status(400).json({error: `Missing '${key}' in request body`});
       }
@@ -131,6 +132,7 @@ BuildRouter
     const folderUpdate = {folder_name: folder_name};
 
     for (const [key, value] of Object.entries(folderUpdate))
+      // eslint-disable-next-line eqeqeq
       if (value == null) {
         return res.status(400).json({error: `Missing '${key}' in request body`});
       }
@@ -173,11 +175,12 @@ BuildRouter
   .get((req, res, next) => {
     const {user_id} = req.params;
     BuildService.getUserTeams(req.app.get('db'), user_id)
-      .then(teams => res.json(teams.map(team => sanitizeTeam(team))));
+      .then(teams => res.json(teams.map(team => sanitizeTeam(team)))).catch(next);
   })
   .post(dataParser, (req, res, next) => {
     const newTeam = req.body;
     for (const [key, value] of Object.entries(newTeam))
+      // eslint-disable-next-line eqeqeq
       if (value == null) {
         return res.status(400).json({error: `Missing '${key}' in request body`});
       }
@@ -255,7 +258,7 @@ BuildRouter
   .get((req, res, next) => {
     const {user_id} = req.params;
     BuildService.getUserSets(req.app.get('db'), user_id)
-      .then(sets => res.json(sets.map(set => sanitizeSet(set))));
+      .then(sets => res.json(sets.map(set => sanitizeSet(set)))).catch(next);
   })
   .post(dataParser, (req, res, next) => {
     const newSet = req.body;

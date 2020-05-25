@@ -269,10 +269,6 @@ const BuildService = {
     return db.insert(newSet).into('sets').returning('*').then(rows => rows[0]);
   },
 
-  // patchUser(db) {
-
-  // },
-
   patchUserFolder(db, id, newFolder) {
     return db('folders').where({ id }).update(newFolder).returning('*').then(rows => rows[0]);
   },
@@ -284,10 +280,6 @@ const BuildService = {
   patchUserSet(db, id, newSet) {
     return db('sets').where({ id }).update(newSet).returning('*').then(rows => rows[0]);
   },
-
-  // deleteUser(db) {
-
-  // },
 
   deleteUserFolder(db, id) {
     return db('folders').where('folders.id', '=', `${id}`).del();

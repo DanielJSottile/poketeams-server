@@ -7,7 +7,7 @@ const helpers = require('./test-helpers');
 describe('Auth Endpoints', () => {
   let db;
 
-  // const { testUsers } = helpers.makeThingsFixtures(); AN EXAMPLE
+  const { testUsers } = helpers.makeThingsFixtures();
   const testUser = testUsers[0];
 
   before('make knex instance', () => {
@@ -19,9 +19,9 @@ describe('Auth Endpoints', () => {
   });
   after('disconnect from db', () => db.destroy());
 
-  before('cleanup', () => helpers.cleanTables(db)); // make sure this is made
+  before('cleanup', () => helpers.cleanTables(db));
 
-  afterEach('cleanup', () => helpers.cleanTables(db)); // make sure this is made
+  afterEach('cleanup', () => helpers.cleanTables(db));
 
   describe('POST /api/auth/login', () => {
     beforeEach('insert users', () =>

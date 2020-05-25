@@ -4,11 +4,18 @@ default names */
 require('dotenv').config();
 const app = require('../src/app');
 const knex = require('knex');
-const testFixture = require('./testfixture');
+const helpers = require('./test-helpers');
 
 describe('All Endpoints for ____', () => {
+
   let testDB;
-  let testObjectSeed = testFixture.getFixture();
+
+  const {
+    testFolders,
+    testTeams,
+    testSets,
+    testUsers,
+  } = helpers.makeFixtures();
   const authTokenTest = 'Bearer my-secret';
 
   before(() => {
