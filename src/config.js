@@ -4,4 +4,5 @@ module.exports = {
   API_TOKEN: process.env.API_TOKEN || 'my-secret',
   DATABASE_URL: process.env.DATABASE_URL || 'postgresql://localhost/poketeams',
   JWT_SECRET: process.env.JWT_SECRET || 'change-this-secret',
+  CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || 'localhost:3000'
 };
