@@ -33,22 +33,22 @@ const sanitizeSet = set => ({
   gender: xss(set.species),
   item: xss(set.item),
   ability: xss(set.ability),
-  level: xss(set.level),
+  level: set.level,
   shiny: set.shiny,
-  happiness: xss(set.happiness),
+  happiness: set.happiness,
   nature: xss(set.nature),
-  hp_ev: xss(set.hp_ev),
-  atk_ev: xss(set.atk_ev),
-  def_ev: xss(set.def_ev),
-  spa_ev: xss(set.spa_ev),
-  spd_ev: xss(set.spd_ev),
-  spe_ev: xss(set.spe_ev),
-  hp_iv: xss(set.hp_iv),
-  atk_iv: xss(set.atk_iv),
-  def_iv: xss(set.def_iv),
-  spa_iv: xss(set.spa_iv),
-  spd_iv: xss(set.spd_iv),
-  spe_iv: xss(set.spe_iv),
+  hp_ev: set.hp_ev,
+  atk_ev: set.atk_ev,
+  def_ev: set.def_ev,
+  spa_ev: set.spa_ev,
+  spd_ev: set.spd_ev,
+  spe_ev: set.spe_ev,
+  hp_iv: set.hp_iv,
+  atk_iv: set.atk_iv,
+  def_iv: set.def_iv,
+  spa_iv: set.spa_iv,
+  spd_iv: set.spd_iv,
+  spe_iv: set.spe_iv,
   move_one: xss(set.move_one),
   move_two: xss(set.move_two),
   move_three: xss(set.move_three),
@@ -95,9 +95,9 @@ AllRouter
           });
         }
         logger.info(
-          `Successful get : team ${team.team_name} was retrieved with id: ${team.id}`
+          `Successful get : team ${team[0].team_name} was retrieved with id: ${team[0].id}`
         );
-        res.json(sanitizeTeam(team));
+        res.json(sanitizeTeam(team[0]));
       })
       .catch(next);
   });
@@ -146,7 +146,7 @@ AllRouter // Gets the Sets for an individual Team, used for the public view.
   });
 
 
-// Don't mess with the position of this thing.  Screws everything up
+// Don't mess with the position of this thing.  Screws everything up.  IS THIS EVEN BEING USED?
 AllRouter 
   .route('/:team_id/:set_id') // Gets a Set from a specific team by its ID.
   .get((req, res, next) => {
