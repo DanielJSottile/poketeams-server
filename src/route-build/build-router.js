@@ -77,7 +77,19 @@ BuildRouter
   .get((req, res, next) => {
     const {folder_id} = req.params;
     BuildService.getSingleUserFolderById(req.app.get('db'), folder_id)
-      .then(folder => res.json(sanitizeFolder(folder))).catch(next);
+      .then(folder => {
+        if (!folder) {
+          logger.error(`Failed get folder with id: ${folder_id}`);
+          return res.status(404).json({
+            error: { message: 'folder doesn\'t exist' }
+          });
+        }
+        logger.info(
+          `Successful get : folder ${folder.folder_name} was retrieved with id: ${folder.id}`
+        );
+        res.json(sanitizeFolder(folder));
+      })
+      .catch(next);
   })
   .delete((req, res, next) => {
     const {folder_id} = req.params;
@@ -106,7 +118,19 @@ BuildRouter
   .get((req, res, next) => { 
     const {user_id} = req.params;
     BuildService.getUserFolders(req.app.get('db'), user_id)
-      .then(folders => res.json(folders.map(folder => sanitizeFolder(folder)))).catch(next);
+      .then(folders => {
+        if (!folders) {
+          logger.error(`Failed get folders with id: ${user_id}`);
+          return res.status(404).json({
+            error: { message: 'folders do not exist' }
+          });
+        }
+        logger.info(
+          `Successful get : folders were retrieved with id: ${user_id}`
+        );
+        res.json(folders.map(folder => sanitizeFolder(folder)));
+      })
+      .catch(next);
   })
   .post(dataParser, (req, res, next) => {
     const {user_id} = req.body;

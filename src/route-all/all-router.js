@@ -88,7 +88,7 @@ AllRouter
     const {team_id} = req.params;
     AllService.getTeamById(req.app.get('db'), team_id)
       .then(team => {
-        if (!team) {
+        if (!team[0]) {
           logger.error(`Failed get team with id: ${team_id}`);
           return res.status(404).json({
             error: { message: 'Team doesn\'t exist' }
@@ -104,26 +104,6 @@ AllRouter
 
 
 // Sets
-
-AllRouter // Gets the Sets for 10 Public Teams, default upon loading (also no longer being used)
-  .route('/sets')
-  .get((req, res, next) => {
-    const page = Number(req.query.page);
-    AllService.getSetsOfTenTeamsDefault(req.app.get('db'), page)
-      .then(sets => {
-        if (!sets) {
-          logger.error('Failed get teams!');
-          return res.status(404).json({
-            error: { message: 'There Are No Teams' }
-          });
-        }
-        logger.info(
-          'Successful get 10 teams!'
-        );
-        res.json(sets.map(set => sanitizeSet(set)));
-      })
-      .catch(next);
-  });
 
 AllRouter // Gets the Sets for an individual Team, used for the public view.
   .route('/:team_id/sets')
@@ -146,7 +126,7 @@ AllRouter // Gets the Sets for an individual Team, used for the public view.
   });
 
 
-// Don't mess with the position of this thing.  Screws everything up.  IS THIS EVEN BEING USED?
+// IS THIS EVEN BEING USED/Does it even work?
 AllRouter 
   .route('/:team_id/:set_id') // Gets a Set from a specific team by its ID.
   .get((req, res, next) => {
@@ -167,28 +147,6 @@ AllRouter
       })
       .catch(next);
   });
-
-// FUTURE
-
-// AllRouter // get the likes for an individual team;  will need to be used in conjunction or seperately.
-//   .route('/:team_id/likes')
-//   .get((req, res, next) => {
-//     const {team_id} = req.params;
-//     AllService.getLikesforATeam(req.app.get('db'), team_id)
-//       .then(likes => {
-//         if (!likes) {
-//           logger.error('Failed get likes for teams!');
-//           return res.status(404).json({
-//             error: { message: 'There are no teams to like' }
-//           });
-//         }
-//         logger.info(
-//           'Successful get likes for 10 teams!'
-//         );
-//         res.json(likes);
-//       })
-//       .catch(next);
-//   });
 
 
 module.exports = AllRouter;

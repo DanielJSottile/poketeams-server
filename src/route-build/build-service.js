@@ -81,178 +81,322 @@ const BuildService = {
       .where('folders.user_id', '=', `${user_id}`);
   },
 
-  getUserFoldersFilter(db, user_id, sort, species) { // this is done
-    let sortVar = [];
-    let speciesVar = [];
+  getUserFoldersFilter(db, user_id, sort, species) {
+    if (species === 'all' || species === '') {
+      let sortVar = [];
 
-    switch(sort) {
-    case 'newest':
-      sortVar = ['folders.date_created', '=', 'asc'];
-      break;
-    case 'oldest':
-      sortVar = ['folders.date_created', '=', 'desc'];
-      break;
-    case 'alphabetical':
-      sortVar = ['folders.folder_name', '=', 'asc'];
-      break;
-    case 'rev alphabetical':
-      sortVar = ['folders.folder_name', '=', 'desc'];
-      break;
-    case 'most likes':
-      sortVar = ('do not know yet'); // do not know yet
-      break;
-    default:
-      sortVar = ['folders.date_created', '=', 'desc'];
-    }
+      switch(sort) {
+      case 'newest':
+        sortVar = ['folders.date_created', 'asc'];
+        break;
+      case 'oldest':
+        sortVar = ['folders.date_created', 'desc'];
+        break;
+      case 'alphabetical':
+        sortVar = ['folders.folder_name', 'asc'];
+        break;
+      case 'rev alphabetical':
+        sortVar = ['folders.folder_name', 'desc'];
+        break;
+      case 'most likes':
+        sortVar = ('do not know yet'); // do not know yet
+        break;
+      default:
+        sortVar = ['folders.date_created', 'desc'];
+      }
 
-    if(species !== 'all'){
-      speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
-    }
-
-    return db
-      .distinct('folders.id')
-      .select(
-        'folders.id',
-        'folder_name',
-        'user_id',
-        'folders.date_created',
-        'folders.date_modified'
-      )
+      return db
+        .distinct('folders.id')
+        .select(
+          'folders.id',
+          'folder_name',
+          'user_id',
+          'folders.date_created',
+          'folders.date_modified'
+        )
       
-      .from('teams')
-      .join('sets', 'sets.team_id', '=', 'teams.id')
-      .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
-      .rightJoin('users', 'users.id', '=', 'folders.user_id')
+        .from('teams')
+        .join('sets', 'sets.team_id', '=', 'teams.id')
+        .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
+        .rightJoin('users', 'users.id', '=', 'folders.user_id')
       
-      .whereNotNull('teams.id')
-      .where('users.id', '=', `${user_id}`)
-      .where(speciesVar[0], speciesVar[1], speciesVar[2]) // find something better than this later
-      .orderBy(sortVar[0], sortVar[1], sortVar[2]);
+        .whereNotNull('teams.id')
+        .where('users.id', '=', `${user_id}`)
+        .orderBy(sortVar[0], sortVar[1]);
+    } else {
+      let sortVar = [];
+      let speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
+
+      switch(sort) {
+      case 'newest':
+        sortVar = ['folders.date_created', 'asc'];
+        break;
+      case 'oldest':
+        sortVar = ['folders.date_created', 'desc'];
+        break;
+      case 'alphabetical':
+        sortVar = ['folders.folder_name', 'asc'];
+        break;
+      case 'rev alphabetical':
+        sortVar = ['folders.folder_name', 'desc'];
+        break;
+      case 'most likes':
+        sortVar = ('do not know yet'); // do not know yet
+        break;
+      default:
+        sortVar = ['folders.date_created', 'desc'];
+      }
+
+      return db
+        .distinct('folders.id')
+        .select(
+          'folders.id',
+          'folder_name',
+          'user_id',
+          'folders.date_created',
+          'folders.date_modified'
+        )
+      
+        .from('teams')
+        .join('sets', 'sets.team_id', '=', 'teams.id')
+        .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
+        .rightJoin('users', 'users.id', '=', 'folders.user_id')
+      
+        .whereNotNull('teams.id')
+        .where('users.id', '=', `${user_id}`)
+        .where(speciesVar[0], speciesVar[1], speciesVar[2])
+        .orderBy(sortVar[0], sortVar[1]);
+    }
   },
 
   getUserTeamsFilter(db, user_id, sort, species){
-    let sortVar = [];
-    let speciesVar = [];
+    if (species === 'all' || species === '') {
+      let sortVar = [];
 
-    switch(sort) {
-    case 'newest':
-      sortVar = ['sets.team_id', 'desc'];
-      break;
-    case 'oldest':
-      sortVar = ['sets.team_id', 'asc'];
-      break;
-    case 'alphabetical':
-      sortVar = ['team_name', 'asc'];
-      break;
-    case 'rev alphabetical':
-      sortVar = ['team_name', 'desc'];
-      break;
-    case 'most likes':
-      sortVar = ('do not know yet'); // do not know yet
-      break;
-    default:
-      sortVar = ['sets.team_id', 'desc'];
+      switch(sort) {
+      case 'newest':
+        sortVar = ['sets.team_id', 'desc'];
+        break;
+      case 'oldest':
+        sortVar = ['sets.team_id', 'asc'];
+        break;
+      case 'alphabetical':
+        sortVar = ['team_name', 'asc'];
+        break;
+      case 'rev alphabetical':
+        sortVar = ['team_name', 'desc'];
+        break;
+      case 'most likes':
+        sortVar = ('do not know yet'); // do not know yet
+        break;
+      default:
+        sortVar = ['sets.team_id', 'desc'];
+      }
+
+      return db
+        .from('teams')
+        .join('sets', 'sets.team_id', '=', 'teams.id')
+        .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
+        .rightJoin('users', 'users.id', '=', 'folders.user_id')
+        .distinct('team_id')
+        .select('sets.team_id as id',
+          'team_name',
+          'description',
+          'teams.date_created',
+          'teams.date_modified',
+          'folders.user_id',
+          'user_name',
+          'folder_id', 
+          'folder_name'
+        )
+        .whereNotNull('teams.id')
+        .where('folders.user_id', '=', `${user_id}`)
+        .orderBy(sortVar[0], sortVar[1]);
+    } else {
+      let sortVar = [];
+      let speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
+
+      switch(sort) {
+      case 'newest':
+        sortVar = ['sets.team_id', 'desc'];
+        break;
+      case 'oldest':
+        sortVar = ['sets.team_id', 'asc'];
+        break;
+      case 'alphabetical':
+        sortVar = ['team_name', 'asc'];
+        break;
+      case 'rev alphabetical':
+        sortVar = ['team_name', 'desc'];
+        break;
+      case 'most likes':
+        sortVar = ('do not know yet'); // do not know yet
+        break;
+      default:
+        sortVar = ['sets.team_id', 'desc'];
+      }
+  
+      return db
+        .from('teams')
+        .join('sets', 'sets.team_id', '=', 'teams.id')
+        .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
+        .rightJoin('users', 'users.id', '=', 'folders.user_id')
+        .distinct('team_id')
+        .select('sets.team_id as id',
+          'team_name',
+          'description',
+          'teams.date_created',
+          'teams.date_modified',
+          'folders.user_id',
+          'user_name',
+          'folder_id', 
+          'folder_name'
+        )
+        .whereNotNull('teams.id')
+        .where('folders.user_id', '=', `${user_id}`)
+        .where(speciesVar[0], speciesVar[1], speciesVar[2])
+        .orderBy(sortVar[0], sortVar[1]);
     }
-
-    if(species !== 'all'){
-      speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
-    }
-
-    return db
-      .from('teams')
-      .join('sets', 'sets.team_id', '=', 'teams.id')
-      .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
-      .rightJoin('users', 'users.id', '=', 'folders.user_id')
-      .distinct('team_id')
-      .select('sets.team_id as id',
-        'team_name',
-        'description',
-        'teams.date_created',
-        'teams.date_modified',
-        'folders.user_id',
-        'user_name',
-        'folder_id', 
-        'folder_name'
-      )
-      .whereNotNull('teams.id')
-      .where('folders.user_id', '=', `${user_id}`)
-      .where(speciesVar[0], speciesVar[1], speciesVar[2]) // find something better than this later
-      .orderBy(sortVar[0], sortVar[1]);
   },
 
   getUserSetsFilter(db, user_id, sort, species){
-    let sortVar = [];
-    let speciesVar = [];
+    if (species === 'all' || species === '') {
+      let sortVar = [];
 
-    switch(sort) {
-    case 'newest':
-      sortVar = ['sets.team_id', 'desc'];
-      break;
-    case 'oldest':
-      sortVar = ['sets.team_id', 'asc'];
-      break;
-    case 'alphabetical':
-      sortVar = ['team_name', 'asc'];
-      break;
-    case 'rev alphabetical':
-      sortVar = ['team_name', 'desc'];
-      break;
-    case 'most likes':
-      sortVar = ('do not know yet'); // do not know yet
-      break;
-    default:
-      sortVar = ['sets.team_id', 'desc'];
+      switch(sort) {
+      case 'newest':
+        sortVar = ['sets.team_id', 'desc'];
+        break;
+      case 'oldest':
+        sortVar = ['sets.team_id', 'asc'];
+        break;
+      case 'alphabetical':
+        sortVar = ['team_name', 'asc'];
+        break;
+      case 'rev alphabetical':
+        sortVar = ['team_name', 'desc'];
+        break;
+      case 'most likes':
+        sortVar = ('do not know yet'); // do not know yet
+        break;
+      default:
+        sortVar = ['sets.team_id', 'desc'];
+      }
+
+      return db
+        .from('teams')
+        .join('sets', 'sets.team_id', '=', 'teams.id')
+        .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
+        .rightJoin('users', 'users.id', '=', 'folders.user_id')
+        .select('sets.id', 
+          'team_name', 
+          'description', 
+          'sets.date_created', 
+          'sets.date_modified', 
+          'folders.user_id', 
+          'user_name', 
+          'folder_id', 
+          'folder_name', 
+          'nickname',
+          'species',
+          'gender',
+          'item',
+          'ability',
+          'level',
+          'shiny',
+          'happiness',
+          'nature',
+          'hp_ev',
+          'atk_ev',
+          'def_ev',
+          'spa_ev',
+          'spd_ev',
+          'spe_ev',
+          'hp_iv',
+          'atk_iv',
+          'def_iv',
+          'spa_iv',
+          'spd_iv',
+          'spe_iv',
+          'move_one',
+          'move_two',
+          'move_three',
+          'move_four',
+          'team_id'
+        )
+        .whereNotNull('teams.id')
+        .where('folders.user_id', '=', `${user_id}`)
+        .orderBy(sortVar[0], sortVar[1]);
+    } else {
+      let sortVar = [];
+      let speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
+
+      switch(sort) {
+      case 'newest':
+        sortVar = ['sets.team_id', 'desc'];
+        break;
+      case 'oldest':
+        sortVar = ['sets.team_id', 'asc'];
+        break;
+      case 'alphabetical':
+        sortVar = ['team_name', 'asc'];
+        break;
+      case 'rev alphabetical':
+        sortVar = ['team_name', 'desc'];
+        break;
+      case 'most likes':
+        sortVar = ('do not know yet'); // do not know yet
+        break;
+      default:
+        sortVar = ['sets.team_id', 'desc'];
+      }
+
+      return db
+        .from('teams')
+        .join('sets', 'sets.team_id', '=', 'teams.id')
+        .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
+        .rightJoin('users', 'users.id', '=', 'folders.user_id')
+        .select('sets.id', 
+          'team_name', 
+          'description', 
+          'sets.date_created', 
+          'sets.date_modified', 
+          'folders.user_id', 
+          'user_name', 
+          'folder_id', 
+          'folder_name', 
+          'nickname',
+          'species',
+          'gender',
+          'item',
+          'ability',
+          'level',
+          'shiny',
+          'happiness',
+          'nature',
+          'hp_ev',
+          'atk_ev',
+          'def_ev',
+          'spa_ev',
+          'spd_ev',
+          'spe_ev',
+          'hp_iv',
+          'atk_iv',
+          'def_iv',
+          'spa_iv',
+          'spd_iv',
+          'spe_iv',
+          'move_one',
+          'move_two',
+          'move_three',
+          'move_four',
+          'team_id'
+        )
+        .whereNotNull('teams.id')
+        .where('folders.user_id', '=', `${user_id}`)
+        .where(speciesVar[0], speciesVar[1], speciesVar[2]) // find something better than this later
+        .orderBy(sortVar[0], sortVar[1]);
     }
-
-    if(species !== 'all'){
-      speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
-    }
-
-    return db
-      .from('teams')
-      .join('sets', 'sets.team_id', '=', 'teams.id')
-      .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
-      .rightJoin('users', 'users.id', '=', 'folders.user_id')
-      .select('sets.id', 
-        'team_name', 
-        'description', 
-        'sets.date_created', 
-        'sets.date_modified', 
-        'folders.user_id', 
-        'user_name', 
-        'folder_id', 
-        'folder_name', 
-        'nickname',
-        'species',
-        'gender',
-        'item',
-        'ability',
-        'level',
-        'shiny',
-        'happiness',
-        'nature',
-        'hp_ev',
-        'atk_ev',
-        'def_ev',
-        'spa_ev',
-        'spd_ev',
-        'spe_ev',
-        'hp_iv',
-        'atk_iv',
-        'def_iv',
-        'spa_iv',
-        'spd_iv',
-        'spe_iv',
-        'move_one',
-        'move_two',
-        'move_three',
-        'move_four',
-        'team_id'
-      )
-      .whereNotNull('teams.id')
-      .where('folders.user_id', '=', `${user_id}`)
-      .where(speciesVar[0], speciesVar[1], speciesVar[2]) // find something better than this later
-      .orderBy(sortVar[0], sortVar[1]);
   },
 
   // POST
