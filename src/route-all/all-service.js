@@ -65,53 +65,6 @@ const AllService = {
       .where('sets.team_id', '=', `${team_id}`);
   },
 
-  getSetById(db, set_id, team_id) { // GET /:team_id/:set_id
-    return db
-      .from('teams')
-      .join('sets', 'sets.team_id', '=', 'teams.id')
-      .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
-      .rightJoin('users', 'users.id', '=', 'folders.user_id')
-      .select('sets.id', 
-        'team_name', 
-        'description', 
-        'sets.date_created', 
-        'sets.date_modified', 
-        'folders.user_id', 
-        'user_name', 
-        'folder_id', 
-        'folder_name', 
-        'nickname',
-        'species',
-        'gender',
-        'item',
-        'ability',
-        'level',
-        'shiny',
-        'happiness',
-        'nature',
-        'hp_ev',
-        'atk_ev',
-        'def_ev',
-        'spa_ev',
-        'spd_ev',
-        'spe_ev',
-        'hp_iv',
-        'atk_iv',
-        'def_iv',
-        'spa_iv',
-        'spd_iv',
-        'spe_iv',
-        'move_one',
-        'move_two',
-        'move_three',
-        'move_four',
-        'team_id'
-      )
-      .whereNotNull('teams.id')
-      .where('sets.id', '=', `${set_id}`)
-      .where('sets.team_id', '=', `${team_id}`);
-  },
-
   getFavorites(db, team_id) { // GET /:team_id
     return db
       .select()
@@ -158,7 +111,6 @@ const AllService = {
 
   // We took out the get sets for 10 teams, because the other one is chained.
 
-  // Why is this not working again???
   getTenTeamsWithSearch(db, page, sort, species) { // GET search?page=1&sort=newest&species=all 
     if (species === 'all' || species === '') {
       const teamsAmt = 10;

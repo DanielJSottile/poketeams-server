@@ -126,27 +126,4 @@ AllRouter // Gets the Sets for an individual Team, used for the public view.
   });
 
 
-// IS THIS EVEN BEING USED/Does it even work?
-AllRouter 
-  .route('/:team_id/:set_id') // Gets a Set from a specific team by its ID.
-  .get((req, res, next) => {
-    const {set_id} = req.params;
-    const {team_id} = req.params;
-    AllService.getSetById(req.app.get('db'), set_id, team_id)
-      .then(set => {
-        if (!set) {
-          logger.error(`Failed get set with id: ${set_id}`);
-          return res.status(404).json({
-            error: { message: 'Set doesn\'t exist' }
-          });
-        }
-        logger.info(
-          `Successful get : team ${set.species} was retrieved with id: ${set.id}`
-        );
-        res.json(sanitizeSet(set));
-      })
-      .catch(next);
-  });
-
-
 module.exports = AllRouter;
