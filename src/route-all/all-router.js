@@ -30,7 +30,7 @@ const sanitizeSet = set => ({
   folder_name: xss(set.folder_name),
   nickname: xss(set.nickname),
   species: xss(set.species),
-  gender: xss(set.species),
+  gender: xss(set.gender),
   item: xss(set.item),
   ability: xss(set.ability),
   level: set.level,
