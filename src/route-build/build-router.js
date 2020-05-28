@@ -106,7 +106,7 @@ BuildRouter
             logger.info(
               'Successful delete : Folder was deleted'
             );
-            res.status(204);
+            res.status(204).end();
           })
           .catch(next);
       });
@@ -155,15 +155,16 @@ BuildRouter
     const { folder_name } = req.body;
     const folderUpdate = {folder_name: folder_name};
 
-    for (const [key, value] of Object.entries(folderUpdate))
+    for (const [key, value] of Object.entries(folderUpdate)) {
       // eslint-disable-next-line eqeqeq
       if (value == null) {
         return res.status(400).json({error: `Missing '${key}' in request body`});
       }
+    }
 
     BuildService.patchUserFolder(req.app.get('db'), id, folderUpdate)
       .then(() => {
-        res.status(204);
+        res.status(204).send();
       })
       .catch(next);
   });
@@ -222,7 +223,7 @@ BuildRouter
 
     BuildService.patchUserTeam(req.app.get('db'), id, teamUpdate)
       .then(() => {
-        res.status(204);
+        res.status(204).send();
       })
       .catch(next);
   });
@@ -245,7 +246,7 @@ BuildRouter
             logger.info(
               'Successful delete : Team was deleted'
             );
-            res.status(204);
+            res.status(204).end();
           });
       })
       .catch(next);
@@ -328,7 +329,7 @@ BuildRouter
 
     BuildService.patchUserSet(req.app.get('db'), id, setUpdate)
       .then(() => {
-        res.status(204);
+        res.status(204).send();
       })
       .catch(next);
   });

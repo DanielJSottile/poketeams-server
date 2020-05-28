@@ -211,25 +211,95 @@ describe.only('Everything', () => {
 
     describe('PATCH BUILD Endpoints', () => {
       it('Patches a folder by user id and body', () => {
-        return supertest(app);
+        const newfolder = {folder_name: 'New Test', id: 1};
+        return supertest(app)
+          .patch('/api/build/folders/1')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .send(newfolder)
+          .expect(204)
+          .then(res =>
+            supertest(app)
+              .get('/api/build/folder/1')
+              .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+              .expect(200)
+          );
       });
       it('Patches a team by user id and body', () => {
-        return supertest(app);
+        const newTeam = {team_name: 'New team', description: 'New desc', id: 1};
+        return supertest(app)
+          .patch('/api/build/teams/1')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .send(newTeam)
+          .expect(204)
+          .then(res =>
+            supertest(app)
+              .get('/api/all/1')
+              .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+              .expect(200)
+          );
       });
       it('Patches a set by user id and body', () => {
-        return supertest(app);
+        const newSet = {
+          id: 1,
+          team_id: 1,
+          nickname: 'New test',
+          species: 'Pikachu',
+          gender: 'F',
+          item: 'Leftovers',
+          ability: 'Static',
+          level: 100,
+          shiny: false,
+          happiness: 255,
+          nature: 'Timid',
+          hp_ev: 0,
+          atk_ev: 0,
+          def_ev: 0,
+          spa_ev: 0,
+          spd_ev: 0,
+          spe_ev: 0,
+          hp_iv: 31,
+          atk_iv: 31,
+          def_iv: 31,
+          spa_iv: 31,
+          spd_iv: 31,
+          spe_iv: 31,
+          move_one: 'Tackle',
+          move_two: 'Zippy Zap',
+          move_three: 'Thunderbolt',
+          move_four: 'Thundershock',
+        };
+        return supertest(app)
+          .patch('/api/build/sets/1')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .send(newSet)
+          .expect(204)
+          .then(res =>
+            supertest(app)
+              .get('/api/all/set/1')
+              .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+              .expect(200)
+          );
       });
     });
 
     describe('DELETE BUILD Endpoints', () => {
       it('Delete a folder by its id', () => {
-        return supertest(app);
+        return supertest(app)
+          .delete('/api/build/folder/1')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .expect(204);
       });
       it('Delete a team by its id', () => {
-        return supertest(app);
+        return supertest(app)
+          .delete('/api/build/team/1')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .expect(204);
       });
       it('Delete a set by its id', () => {
-        return supertest(app);
+        return supertest(app)
+          .delete('/api/build/set/1/1')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .expect(204);
       });
     });
   });
