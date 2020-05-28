@@ -62,21 +62,20 @@ describe.only('Everything', () => {
             expect(res.body).to.be.an('object');
           });
       });
+      it('Gets a set by its id', () => {
+        return supertest(app)
+          .get('/api/all/set/1')
+          .expect(200)
+          .then(res => {
+            expect(res.body).to.be.an('object');
+          });
+      });
       it('Gets the sets for a specific team by id', () => {
         return supertest(app)
           .get('/api/all/1/sets')
           .expect(200)
           .then(res => {
             expect(res.body).to.be.an('array');
-          });
-      });
-      it('Gets a specific set for a specific team by id', () => {  // is this even used?
-        return supertest(app)
-          .get('/api/all/1/1')
-          .expect(200)
-          .then(res => {
-            expect(res.body).to.be.an('object');
-            expect(res.body.species).to.eql('Aegislash'); // I'd personally like to know why this fails and fix it, but I dont we use this function anymore.
           });
       });
     });
@@ -263,14 +262,6 @@ describe.only('Everything', () => {
           .expect(200)
           .then(res => {
             expect(res.body).to.eql([]);
-          });
-      });
-      it('When Empty Gets a specific set for a specific team by id', () => { 
-        return supertest(app)
-          .get('/api/all/1/1')
-          .expect(200)
-          .then(res => { 
-            expect(res.body).to.be.an('object'); // really need to double check if is ever used in the code...
           });
       });
     });

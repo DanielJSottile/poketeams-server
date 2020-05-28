@@ -125,5 +125,25 @@ AllRouter // Gets the Sets for an individual Team, used for the public view.
       .catch(next);
   });
 
+AllRouter
+  .route('/set/:set_id') // Get a team by it's ID
+  .get((req, res, next) => {
+    const {set_id} = req.params;
+    AllService.getSetById(req.app.get('db'), set_id)
+      .then(set => {
+        if (!set[0]) {
+          logger.error(`Failed get set with id: ${set_id}`);
+          return res.status(404).json({
+            error: { message: 'Set doesn\'t exist' }
+          });
+        }
+        logger.info(
+          `Successful get : set ${set[0].set_name} was retrieved with id: ${set[0].id}`
+        );
+        res.json(sanitizeSet(set[0]));
+      })
+      .catch(next);
+  });
+
 
 module.exports = AllRouter;

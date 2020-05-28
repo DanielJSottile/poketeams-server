@@ -19,6 +19,52 @@ const AllService = {
       .where('teams.id', '=', `${team_id}`);
   },
 
+  getSetById(db, set_id) {
+    return db
+      .from('teams')
+      .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
+      .rightJoin('users', 'users.id', '=', 'folders.user_id')
+      .join('sets', 'sets.team_id', '=', 'teams.id')
+      .select(
+        'sets.id', 
+        'team_name', 
+        'description', 
+        'sets.date_created', 
+        'sets.date_modified', 
+        'folders.user_id', 
+        'user_name', 
+        'folder_id', 
+        'folder_name', 
+        'nickname',
+        'species',
+        'gender',
+        'item',
+        'ability',
+        'level',
+        'shiny',
+        'happiness',
+        'nature',
+        'hp_ev',
+        'atk_ev',
+        'def_ev',
+        'spa_ev',
+        'spd_ev',
+        'spe_ev',
+        'hp_iv',
+        'atk_iv',
+        'def_iv',
+        'spa_iv',
+        'spd_iv',
+        'spe_iv',
+        'move_one',
+        'move_two',
+        'move_three',
+        'move_four',
+        'team_id'
+      )
+      .where('sets.id', '=', `${set_id}`);
+  },
+
   getSetsForIndividualTeam(db, team_id) {
     return db
       .from('teams')
