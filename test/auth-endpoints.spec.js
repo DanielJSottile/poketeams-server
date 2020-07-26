@@ -66,7 +66,7 @@ describe('Auth Endpoints', () => {
     });
     it('responds 200 and JWT auth when valid credentials', () => {
       const validCreds = {user_name: testUser.user_name, password: testUser.password};
-      const expectedToken = jwt.sign({ user_id: testUser.id }, process.env.JWT_SECRET, {subject: testUser.user_name, algorithm: 'HS256'});
+      const expectedToken = jwt.sign({ user_id: testUser.id }, process.env.JWT_SECRET, {subject: testUser.user_name, expiresIn: process.env.JWT_EXPIRY, algorithm: 'HS256'});
 
       return supertest(app)
         .post('/api/auth/login')

@@ -5,7 +5,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const AllRouter = require('./route-all/all-router');
-const UserRouter = require('./route-build/build-router');
+const BuildRouter = require('./route-build/build-router');
+const UserRouter = require('./users/users-router');
 const AuthRouter = require('./auth/auth-router');
 const { NODE_ENV} = require('./config');
 const {CLIENT_ORIGIN} = require('./config');
@@ -29,7 +30,8 @@ app.use(
 // server requests
 
 app.use('/api/all', AllRouter);
-app.use('/api/build', UserRouter);
+app.use('/api/build', BuildRouter);
+app.use('/api/users', UserRouter),
 app.use('/api/auth', AuthRouter);
 
 // errorHandler middleware
