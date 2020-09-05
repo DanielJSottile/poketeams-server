@@ -1,12 +1,12 @@
-const express = require('express');
-const logger = require('../logger');
-const xss = require('xss');
+const express = require("express");
+const logger = require("../logger");
+const xss = require("xss");
 const AllRouter = express.Router();
-const AllService = require('./all-service');
+const AllService = require("./all-service");
 
 // Sanitization
 
-const sanitizeTeam = team => ({
+const sanitizeTeam = (team) => ({
   id: team.id,
   team_name: xss(team.team_name),
   description: xss(team.description),
@@ -18,7 +18,7 @@ const sanitizeTeam = team => ({
   folder_name: xss(team.folder_name),
 });
 
-const sanitizeSet = set => ({
+const sanitizeSet = (set) => ({
   id: set.id,
   team_name: xss(set.team_name),
   description: xss(set.description),
@@ -53,45 +53,39 @@ const sanitizeSet = set => ({
   move_two: xss(set.move_two),
   move_three: xss(set.move_three),
   move_four: xss(set.move_four),
-  team_id: set.team_id
+  team_id: set.team_id,
 });
 
 // Teams
 
-
-AllRouter // Get 10 teams with a search
-  .route('/search')
+AllRouter.route("/search") // Get 10 teams with a search
   .get((req, res, next) => {
     const page = Number(req.query.page);
     const sort = req.query.sort;
     const species = req.query.species;
-    AllService.getTenTeamsWithSearch(req.app.get('db'), page, sort, species)
-      .then(teams => {
+    AllService.getTenTeamsWithSearch(req.app.get("db"), page, sort, species)
+      .then((teams) => {
         if (!teams) {
-          logger.error('Failed get teams!');
+          logger.error("Failed get teams!");
           return res.status(404).json({
-            error: { message: 'There Are No Teams' }
+            error: { message: "There Are No Teams" },
           });
         }
-        logger.info(
-          'Successful get 10 teams!'
-        );
-        res.json(teams.map(team => sanitizeTeam(team)));
+        logger.info("Successful get 10 teams!");
+        res.json(teams.map((team) => sanitizeTeam(team)));
       })
       .catch(next);
   });
-  
 
-AllRouter
-  .route('/:team_id') // Get a team by it's ID
+AllRouter.route("/:team_id") // Get a team by it's ID
   .get((req, res, next) => {
-    const {team_id} = req.params;
-    AllService.getTeamById(req.app.get('db'), team_id)
-      .then(team => {
+    const { team_id } = req.params;
+    AllService.getTeamById(req.app.get("db"), team_id)
+      .then((team) => {
         if (!team[0]) {
           logger.error(`Failed get team with id: ${team_id}`);
           return res.status(404).json({
-            error: { message: 'Team doesn\'t exist' }
+            error: { message: "Team doesn't exist" },
           });
         }
         logger.info(
@@ -102,39 +96,34 @@ AllRouter
       .catch(next);
   });
 
-
 // Sets
 
-AllRouter // Gets the Sets for an individual Team, used for the public view.
-  .route('/:team_id/sets')
+AllRouter.route("/:team_id/sets") // Gets the Sets for an individual Team, used for the public view.
   .get((req, res, next) => {
-    const {team_id} = req.params;
-    AllService.getSetsForIndividualTeam(req.app.get('db'), team_id)
-      .then(sets => {
+    const { team_id } = req.params;
+    AllService.getSetsForIndividualTeam(req.app.get("db"), team_id)
+      .then((sets) => {
         if (!sets) {
-          logger.error('Failed get sets for teams!');
+          logger.error("Failed get sets for teams!");
           return res.status(404).json({
-            error: { message: 'There probably isnt this team' }
+            error: { message: "There probably isnt this team" },
           });
         }
-        logger.info(
-          'Successful get sets for individual team!'
-        );
-        res.json(sets.map(set => sanitizeSet(set)));
+        logger.info("Successful get sets for individual team!");
+        res.json(sets.map((set) => sanitizeSet(set)));
       })
       .catch(next);
   });
 
-AllRouter
-  .route('/set/:set_id') // Get a team by it's ID
+AllRouter.route("/set/:set_id") // Get a team by it's ID
   .get((req, res, next) => {
-    const {set_id} = req.params;
-    AllService.getSetById(req.app.get('db'), set_id)
-      .then(set => {
+    const { set_id } = req.params;
+    AllService.getSetById(req.app.get("db"), set_id)
+      .then((set) => {
         if (!set[0]) {
           logger.error(`Failed get set with id: ${set_id}`);
           return res.status(404).json({
-            error: { message: 'Set doesn\'t exist' }
+            error: { message: "Set doesn't exist" },
           });
         }
         logger.info(
@@ -144,6 +133,5 @@ AllRouter
       })
       .catch(next);
   });
-
 
 module.exports = AllRouter;
