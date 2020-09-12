@@ -56,7 +56,7 @@ describe.only('Everything', () => {
         return supertest(app)
           .get('/api/all/search?page=1&sort=newest&species=all')
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -64,7 +64,7 @@ describe.only('Everything', () => {
         return supertest(app)
           .get('/api/all/1')
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('object');
           });
       });
@@ -72,7 +72,7 @@ describe.only('Everything', () => {
         return supertest(app)
           .get('/api/all/set/1')
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('object');
           });
       });
@@ -80,7 +80,7 @@ describe.only('Everything', () => {
         return supertest(app)
           .get('/api/all/1/sets')
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -92,7 +92,7 @@ describe.only('Everything', () => {
           .get('/api/build/folder/1')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('object');
           });
       });
@@ -101,7 +101,7 @@ describe.only('Everything', () => {
           .get('/api/build/folders/1')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -110,7 +110,7 @@ describe.only('Everything', () => {
           .get('/api/build/folders/1/filter?page=1&sort=newest&species=all')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -119,7 +119,7 @@ describe.only('Everything', () => {
           .get('/api/build/teams/1')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -128,7 +128,7 @@ describe.only('Everything', () => {
           .get('/api/build/teams/1/filter?page=1&sort=newest&species=all')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -137,7 +137,7 @@ describe.only('Everything', () => {
           .get('/api/build/sets/1')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -146,7 +146,7 @@ describe.only('Everything', () => {
           .get('/api/build/sets/1/filter?page=1&sort=newest&species=all')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -160,7 +160,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .send(newfolder)
           .expect(201)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('object');
           });
       });
@@ -175,7 +175,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .send(newTeam)
           .expect(201)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('object');
           });
       });
@@ -213,7 +213,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .send(newSet)
           .expect(201)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('object');
           });
       });
@@ -227,7 +227,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .send(newfolder)
           .expect(204)
-          .then((res: Response) =>
+          .then((res: any) =>
             supertest(app)
               .get('/api/build/folder/1')
               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
@@ -245,7 +245,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .send(newTeam)
           .expect(204)
-          .then((res: Response) =>
+          .then((res: any) =>
             supertest(app)
               .get('/api/all/1')
               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
@@ -287,7 +287,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .send(newSet)
           .expect(204)
-          .then((res: Response) =>
+          .then((res: any) =>
             supertest(app)
               .get('/api/all/set/1')
               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
@@ -331,7 +331,7 @@ describe.only('Everything', () => {
           .get('/api/all/search?page=1&sort=newest&species=all')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.eql([]); // needs some fixing I think
           });
       });
@@ -342,7 +342,7 @@ describe.only('Everything', () => {
         return supertest(app)
           .get('/api/all/1/sets')
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.eql([]);
           });
       });
@@ -354,7 +354,7 @@ describe.only('Everything', () => {
           .get('/api/build/folder/1')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('object');
           });
       });
@@ -363,7 +363,7 @@ describe.only('Everything', () => {
           .get('/api/build/folders/1')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -372,7 +372,7 @@ describe.only('Everything', () => {
           .get('/api/build/folders/1/filter?page=1&sort=newest&species=all')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -381,7 +381,7 @@ describe.only('Everything', () => {
           .get('/api/build/teams/1')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -390,7 +390,7 @@ describe.only('Everything', () => {
           .get('/api/build/teams/1/filter?page=1&sort=newest&species=all')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -399,7 +399,7 @@ describe.only('Everything', () => {
           .get('/api/build/sets/1')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
@@ -408,7 +408,7 @@ describe.only('Everything', () => {
           .get('/api/build/sets/1/filter?page=1&sort=newest&species=all')
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
-          .then((res: Response) => {
+          .then((res: any) => {
             expect(res.body).to.be.an('array');
           });
       });
