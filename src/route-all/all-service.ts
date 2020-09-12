@@ -1,5 +1,6 @@
+export {};
 const AllService = {
-  getTeamById(db, team_id) {
+  getTeamById(db: any, team_id: number) {
     // GET /:team_id
     return db
       .from('teams')
@@ -20,7 +21,7 @@ const AllService = {
       .where('teams.id', '=', `${team_id}`);
   },
 
-  getTeamsForIndividualFolder(db, folder_id) {
+  getTeamsForIndividualFolder(db: any, folder_id: number) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -39,7 +40,7 @@ const AllService = {
       .where('teams.folder_id', '=', `${folder_id}`);
   },
 
-  getSetById(db, set_id) {
+  getSetById(db: any, set_id: number) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -85,7 +86,7 @@ const AllService = {
       .where('sets.id', '=', `${set_id}`);
   },
 
-  getSetsForIndividualTeam(db, team_id) {
+  getSetsForIndividualTeam(db: any, team_id: number) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -131,7 +132,7 @@ const AllService = {
       .where('sets.team_id', '=', `${team_id}`);
   },
 
-  getFavorites(db, team_id) {
+  getFavorites(db: any, team_id: number) {
     // GET /:team_id
     return db
       .select()
@@ -144,7 +145,7 @@ const AllService = {
   },
 
   // only called upon opening of the Home public view WORKS, combine with below to get full PUBLIC TEAMS!
-  getTenTeamsDefault(db, page) {
+  getTenTeamsDefault(db: any, page: number) {
     const teamsAmt = 10;
     const offset = teamsAmt * (page - 1);
     return db
@@ -168,7 +169,7 @@ const AllService = {
       .offset(`${offset}`);
   },
 
-  getLikesforATeam(db, team_id) {
+  getLikesforATeam(db: any, team_id: number) {
     return db
       .from('favorites')
       .select()
@@ -178,31 +179,31 @@ const AllService = {
 
   // We took out the get sets for 10 teams, because the other one is chained.
 
-  getTenTeamsWithSearch(db, page, sort, species) {
+  getTenTeamsWithSearch(db: any, page: number, sort: string, species: string) {
     // GET search?page=1&sort=newest&species=all
     if (species === 'all' || species === '') {
       const teamsAmt = 10;
       const offset = teamsAmt * (page - 1);
-      let sortVar = [];
+      let sortVar: any[] | string = [];
 
       switch (sort) {
-      case 'newest':
-        sortVar = ['sets.team_id', 'desc'];
-        break;
-      case 'oldest':
-        sortVar = ['sets.team_id', 'asc'];
-        break;
-      case 'alphabetical':
-        sortVar = ['team_name', 'asc'];
-        break;
-      case 'rev alphabetical':
-        sortVar = ['team_name', 'desc'];
-        break;
-      case 'most likes':
-        sortVar = 'do not know yet'; // do not know yet
-        break;
-      default:
-        sortVar = ['sets.team_id', 'desc'];
+        case 'newest':
+          sortVar = ['sets.team_id', 'desc'];
+          break;
+        case 'oldest':
+          sortVar = ['sets.team_id', 'asc'];
+          break;
+        case 'alphabetical':
+          sortVar = ['team_name', 'asc'];
+          break;
+        case 'rev alphabetical':
+          sortVar = ['team_name', 'desc'];
+          break;
+        case 'most likes':
+          sortVar = 'do not know yet'; // do not know yet
+          break;
+        default:
+          sortVar = ['sets.team_id', 'desc'];
       }
 
       return db
@@ -229,27 +230,27 @@ const AllService = {
     } else {
       const teamsAmt = 10;
       const offset = teamsAmt * (page - 1);
-      let sortVar = [];
+      let sortVar: any[] | string = [];
       let speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
 
       switch (sort) {
-      case 'newest':
-        sortVar = ['sets.team_id', 'desc'];
-        break;
-      case 'oldest':
-        sortVar = ['sets.team_id', 'asc'];
-        break;
-      case 'alphabetical':
-        sortVar = ['team_name', 'asc'];
-        break;
-      case 'rev alphabetical':
-        sortVar = ['team_name', 'desc'];
-        break;
-      case 'most likes':
-        sortVar = 'do not know yet'; // do not know yet
-        break;
-      default:
-        sortVar = ['sets.team_id', 'desc'];
+        case 'newest':
+          sortVar = ['sets.team_id', 'desc'];
+          break;
+        case 'oldest':
+          sortVar = ['sets.team_id', 'asc'];
+          break;
+        case 'alphabetical':
+          sortVar = ['team_name', 'asc'];
+          break;
+        case 'rev alphabetical':
+          sortVar = ['team_name', 'desc'];
+          break;
+        case 'most likes':
+          sortVar = 'do not know yet'; // do not know yet
+          break;
+        default:
+          sortVar = ['sets.team_id', 'desc'];
       }
 
       return db
