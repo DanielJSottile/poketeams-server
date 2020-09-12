@@ -1,5 +1,5 @@
-export {};
-const express = require('express');
+import * as express from 'express';
+import { Request, Response, NextFunction } from 'express';
 const logger = require('../logger');
 const xss = require('xss');
 const AllRouter = express.Router();
@@ -130,7 +130,7 @@ const sanitizeSet = (set: Set) => ({
 // Folder
 
 AllRouter.route('/folderpublic/:folder_id') // Get a single Folder by ID
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { folder_id } = req.params;
     BuildService.getSingleUserFolderById(req.app.get('db'), folder_id)
       .then((folder: any) => {
@@ -151,7 +151,7 @@ AllRouter.route('/folderpublic/:folder_id') // Get a single Folder by ID
 // Teams
 
 AllRouter.route('/:folder_id/teams') // Gets the Teams for an individual Folder, used for the public view.
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { folder_id } = req.params;
     AllService.getTeamsForIndividualFolder(req.app.get('db'), folder_id)
       .then((teams: any) => {
@@ -168,7 +168,7 @@ AllRouter.route('/:folder_id/teams') // Gets the Teams for an individual Folder,
   });
 
 AllRouter.route('/search') // Get 10 teams with a search
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const page = Number(req.query.page);
     const sort = req.query.sort;
     const species = req.query.species;
@@ -187,7 +187,7 @@ AllRouter.route('/search') // Get 10 teams with a search
   });
 
 AllRouter.route('/:team_id') // Get a team by it's ID
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { team_id } = req.params;
     AllService.getTeamById(req.app.get('db'), team_id)
       .then((team: any) => {
@@ -208,7 +208,7 @@ AllRouter.route('/:team_id') // Get a team by it's ID
 // Sets
 
 AllRouter.route('/:team_id/sets') // Gets the Sets for an individual Team, used for the public view.
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { team_id } = req.params;
     AllService.getSetsForIndividualTeam(req.app.get('db'), team_id)
       .then((sets: any) => {
@@ -225,7 +225,7 @@ AllRouter.route('/:team_id/sets') // Gets the Sets for an individual Team, used 
   });
 
 AllRouter.route('/set/:set_id') // Get a team by it's ID
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { set_id } = req.params;
     AllService.getSetById(req.app.get('db'), set_id)
       .then((set: any) => {

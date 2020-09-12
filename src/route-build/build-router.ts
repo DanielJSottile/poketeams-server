@@ -1,5 +1,5 @@
-export {};
-const express = require('express');
+import * as express from 'express';
+import { Request, Response, NextFunction } from 'express';
 const logger = require('../logger');
 const xss = require('xss');
 const BuildRouter = express.Router();
@@ -134,7 +134,7 @@ const sanitizeSet = (set: Set) => ({
 
 BuildRouter.route('/folder/:folder_id') // Get a single Folder by ID
   .all(requireAuth)
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { folder_id } = req.params;
     BuildService.getSingleUserFolderById(req.app.get('db'), folder_id)
       .then((folder: any) => {
@@ -151,7 +151,7 @@ BuildRouter.route('/folder/:folder_id') // Get a single Folder by ID
       })
       .catch(next);
   })
-  .delete((req: any, res: any, next: any) => {
+  .delete((req: Request, res: Response, next: NextFunction) => {
     const { folder_id } = req.params;
     BuildService.getSingleUserFolderById(req.app.get('db'), folder_id).then(
       (folder: any) => {
@@ -173,7 +173,7 @@ BuildRouter.route('/folder/:folder_id') // Get a single Folder by ID
 
 BuildRouter.route('/folders/:user_id') // Get the users folders, or post/patch a folder to here.
   .all(requireAuth)
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { user_id } = req.params;
     BuildService.getUserFolders(req.app.get('db'), user_id)
       .then((folders: any) => {
@@ -190,7 +190,7 @@ BuildRouter.route('/folders/:user_id') // Get the users folders, or post/patch a
       })
       .catch(next);
   })
-  .post(dataParser, (req: any, res: any, next: any) => {
+  .post(dataParser, (req: Request, res: Response, next: NextFunction) => {
     const { user_id } = req.body;
     const { folder_name } = req.body;
     const newFolder = { folder_name, user_id };
@@ -210,7 +210,7 @@ BuildRouter.route('/folders/:user_id') // Get the users folders, or post/patch a
       })
       .catch(next);
   })
-  .patch(dataParser, (req: any, res: any, next: any) => {
+  .patch(dataParser, (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.body;
     const { folder_name } = req.body;
     const folderUpdate = { folder_name: folder_name };
@@ -233,7 +233,7 @@ BuildRouter.route('/folders/:user_id') // Get the users folders, or post/patch a
 
 BuildRouter.route('/folders/:user_id/filter/') // get user folders when filtered
   .all(requireAuth)
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { user_id } = req.params;
     const sort = req.query.sort;
     const species = req.query.species;
@@ -255,7 +255,7 @@ BuildRouter.route('/folders/:user_id/filter/') // get user folders when filtered
 
 BuildRouter.route('/teams/:user_id') // get user teams, post/patch new team
   .all(requireAuth)
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { user_id } = req.params;
     BuildService.getUserTeams(req.app.get('db'), user_id)
       .then((teams: any) =>
@@ -263,7 +263,7 @@ BuildRouter.route('/teams/:user_id') // get user teams, post/patch new team
       )
       .catch(next);
   })
-  .post(dataParser, (req: any, res: any, next: any) => {
+  .post(dataParser, (req: Request, res: Response, next: NextFunction) => {
     const newTeam = req.body;
     // eslint-disable-next-line eqeqeq
     for (const [key, value] of Object.entries(newTeam))
@@ -279,7 +279,7 @@ BuildRouter.route('/teams/:user_id') // get user teams, post/patch new team
       })
       .catch(next);
   })
-  .patch(dataParser, (req: any, res: any, next: any) => {
+  .patch(dataParser, (req: Request, res: Response, next: NextFunction) => {
     const body = req.body;
     const id = body.id;
     const teamUpdate = {
@@ -296,7 +296,7 @@ BuildRouter.route('/teams/:user_id') // get user teams, post/patch new team
 
 BuildRouter.route('/team/:team_id') // delete a single team
   .all(requireAuth)
-  .delete((req: any, res: any, next: any) => {
+  .delete((req: Request, res: Response, next: NextFunction) => {
     const { team_id } = req.params;
     AllService.getTeamById(req.app.get('db'), Number(team_id))
       .then((team: any) => {
@@ -318,7 +318,7 @@ BuildRouter.route('/team/:team_id') // delete a single team
 
 BuildRouter.route('/teams/:user_id/filter/') // get the user teams when filtered
   .all(requireAuth)
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { user_id } = req.params;
     const sort = req.query.sort;
     const species = req.query.species;
@@ -340,13 +340,13 @@ BuildRouter.route('/teams/:user_id/filter/') // get the user teams when filtered
 
 BuildRouter.route('/sets/:user_id') // get the user sets, post/patch a set
   .all(requireAuth)
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { user_id } = req.params;
     BuildService.getUserSets(req.app.get('db'), user_id)
       .then((sets: any) => res.json(sets.map((set: Set) => sanitizeSet(set))))
       .catch(next);
   })
-  .post(dataParser, (req: any, res: any, next: any) => {
+  .post(dataParser, (req: Request, res: Response, next: NextFunction) => {
     const newSet = req.body;
     // eliminate the check on values because we can have false and null values!
 
@@ -356,7 +356,7 @@ BuildRouter.route('/sets/:user_id') // get the user sets, post/patch a set
       })
       .catch(next);
   })
-  .patch(dataParser, (req: any, res: any, next: any) => {
+  .patch(dataParser, (req: Request, res: Response, next: NextFunction) => {
     const body = req.body;
     const id = body.id;
 
@@ -397,7 +397,7 @@ BuildRouter.route('/sets/:user_id') // get the user sets, post/patch a set
 
 BuildRouter.route('/set/:team_id/:set_id') // delete a set by id
   .all(requireAuth)
-  .delete((req: any, res: any, next: any) => {
+  .delete((req: Request, res: Response, next: NextFunction) => {
     const { set_id } = req.params;
     const { team_id } = req.params;
     AllService.getSetById(req.app.get('db'), Number(set_id), Number(team_id))
@@ -420,7 +420,7 @@ BuildRouter.route('/set/:team_id/:set_id') // delete a set by id
 
 BuildRouter.route('/sets/:user_id/filter/') // gets the user sets when filtered
   .all(requireAuth)
-  .get((req: any, res: any, next: any) => {
+  .get((req: Request, res: Response, next: NextFunction) => {
     const { user_id } = req.params;
     const sort = req.query.sort;
     const species = req.query.species;
