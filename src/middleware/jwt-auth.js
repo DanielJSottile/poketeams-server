@@ -1,6 +1,6 @@
 const AuthService = require('../auth/auth-service');
 
-function requireAuth(req: any, res: any, next: any) {
+function requireAuth(req, res, next) {
   const authToken = req.get('Authorization') || '';
 
   let bearerToken;
@@ -14,13 +14,13 @@ function requireAuth(req: any, res: any, next: any) {
     const payload = AuthService.verifyJwt(bearerToken);
 
     AuthService.getUserWithUserName(req.app.get('db'), payload.sub)
-      .then((user: any) => {
+      .then((user) => {
         if (!user)
           return res.status(401).json({ error: 'Unauthorized request' });
         req.user = user;
         next();
       })
-      .catch((err: any) => {
+      .catch((err) => {
         // eslint-disable-next-line no-console
         console.error(err);
         next(err);

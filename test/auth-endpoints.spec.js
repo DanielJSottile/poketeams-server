@@ -1,14 +1,11 @@
-export {};
 const knex = require('knex');
 require('dotenv').config();
 const app = require('../src/app');
 const jwt = require('jsonwebtoken');
 const helpers = require('./test-helpers');
-const { expect } = require('chai');
-const supertest = require('supertest');
 
 describe('Auth Endpoints', () => {
-  let db: any;
+  let db;
 
   const { testUsers } = helpers.makeFixtures();
   const testUser = testUsers[0];
@@ -24,15 +21,15 @@ describe('Auth Endpoints', () => {
 
   before('cleanup', () => helpers.cleanTables(db));
 
-  afterEach(() => helpers.cleanTables(db));
+  afterEach('cleanup', () => helpers.cleanTables(db));
 
   describe('POST /api/auth/login', () => {
-    beforeEach(() => helpers.seedUsers(db, testUsers));
+    beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
 
     const requiredFields = ['user_name', 'password'];
 
-    requiredFields.forEach((field: string) => {
-      const loginAttemptBody: any = {
+    requiredFields.forEach((field) => {
+      const loginAttemptBody = {
         user_name: testUser.user_name,
         password: testUser.password,
       };

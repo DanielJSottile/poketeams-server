@@ -1,5 +1,4 @@
-import * as express from 'express';
-import { Request, Response, NextFunction } from 'express';
+const express = require('express');
 const logger = require('../logger');
 const xss = require('xss');
 const AllRouter = express.Router();
@@ -7,69 +6,9 @@ const AllService = require('./all-service');
 // temporary for now?
 const BuildService = require('../route-build/build-service');
 
-// Interfaces
-
-export interface Folder {
-  id: number;
-  folder_name: string;
-  user_id: number;
-  date_created: Date;
-  date_modified: Date | null;
-}
-
-export interface Team {
-  id: number;
-  team_name: string;
-  description: string;
-  date_created: Date;
-  date_modified: Date | null;
-  user_id: number;
-  user_name: string;
-  folder_id: number;
-  folder_name: string;
-}
-
-export interface Set {
-  id: number;
-  team_name: string;
-  description: string;
-  date_created: Date;
-  date_modified: Date | null;
-  user_id: number;
-  user_name: string;
-  folder_id: number;
-  folder_name: string;
-  nickname: string;
-  species: string;
-  gender: string;
-  item: string;
-  ability: string;
-  level: number;
-  shiny: boolean;
-  happiness: number;
-  nature: string;
-  hp_ev: number;
-  atk_ev: number;
-  def_ev: number;
-  spa_ev: number;
-  spd_ev: number;
-  spe_ev: number;
-  hp_iv: number;
-  atk_iv: number;
-  def_iv: number;
-  spa_iv: number;
-  spd_iv: number;
-  spe_iv: number;
-  move_one: string;
-  move_two: string;
-  move_three: string;
-  move_four: string;
-  team_id: number;
-}
-
 // Sanitization
 
-const sanitizeFolder = (folder: Folder) => ({
+const sanitizeFolder = (folder) => ({
   id: folder.id,
   folder_name: xss(folder.folder_name),
   user_id: folder.user_id,
@@ -77,7 +16,7 @@ const sanitizeFolder = (folder: Folder) => ({
   date_modified: xss(folder.date_modified),
 });
 
-const sanitizeTeam = (team: Team) => ({
+const sanitizeTeam = (team) => ({
   id: team.id,
   team_name: xss(team.team_name),
   description: xss(team.description),
@@ -89,7 +28,7 @@ const sanitizeTeam = (team: Team) => ({
   folder_name: xss(team.folder_name),
 });
 
-const sanitizeSet = (set: Set) => ({
+const sanitizeSet = (set) => ({
   id: set.id,
   team_name: xss(set.team_name),
   description: xss(set.description),
@@ -130,10 +69,10 @@ const sanitizeSet = (set: Set) => ({
 // Folder
 
 AllRouter.route('/folderpublic/:folder_id') // Get a single Folder by ID
-  .get((req: Request, res: Response, next: NextFunction) => {
+  .get((req, res, next) => {
     const { folder_id } = req.params;
     BuildService.getSingleUserFolderById(req.app.get('db'), folder_id)
-      .then((folder: any) => {
+      .then((folder) => {
         if (!folder) {
           logger.error(`Failed get folder with id: ${folder_id}`);
           return res.status(404).json({
@@ -151,10 +90,10 @@ AllRouter.route('/folderpublic/:folder_id') // Get a single Folder by ID
 // Teams
 
 AllRouter.route('/:folder_id/teams') // Gets the Teams for an individual Folder, used for the public view.
-  .get((req: Request, res: Response, next: NextFunction) => {
+  .get((req, res, next) => {
     const { folder_id } = req.params;
     AllService.getTeamsForIndividualFolder(req.app.get('db'), folder_id)
-      .then((teams: any) => {
+      .then((teams) => {
         if (!teams) {
           logger.error('Failed get teams for folder!');
           return res.status(404).json({
@@ -162,18 +101,18 @@ AllRouter.route('/:folder_id/teams') // Gets the Teams for an individual Folder,
           });
         }
         logger.info('Successful get teams for individual folder!');
-        res.json(teams.map((team: Team) => sanitizeTeam(team)));
+        res.json(teams.map((team) => sanitizeTeam(team)));
       })
       .catch(next);
   });
 
 AllRouter.route('/search') // Get 10 teams with a search
-  .get((req: Request, res: Response, next: NextFunction) => {
+  .get((req, res, next) => {
     const page = Number(req.query.page);
     const sort = req.query.sort;
     const species = req.query.species;
     AllService.getTenTeamsWithSearch(req.app.get('db'), page, sort, species)
-      .then((teams: any) => {
+      .then((teams) => {
         if (!teams) {
           logger.error('Failed get teams!');
           return res.status(404).json({
@@ -181,16 +120,16 @@ AllRouter.route('/search') // Get 10 teams with a search
           });
         }
         logger.info('Successful get 10 teams!');
-        res.json(teams.map((team: Team) => sanitizeTeam(team)));
+        res.json(teams.map((team) => sanitizeTeam(team)));
       })
       .catch(next);
   });
 
 AllRouter.route('/:team_id') // Get a team by it's ID
-  .get((req: Request, res: Response, next: NextFunction) => {
+  .get((req, res, next) => {
     const { team_id } = req.params;
     AllService.getTeamById(req.app.get('db'), team_id)
-      .then((team: any) => {
+      .then((team) => {
         if (!team[0]) {
           logger.error(`Failed get team with id: ${team_id}`);
           return res.status(404).json({
@@ -208,10 +147,10 @@ AllRouter.route('/:team_id') // Get a team by it's ID
 // Sets
 
 AllRouter.route('/:team_id/sets') // Gets the Sets for an individual Team, used for the public view.
-  .get((req: Request, res: Response, next: NextFunction) => {
+  .get((req, res, next) => {
     const { team_id } = req.params;
     AllService.getSetsForIndividualTeam(req.app.get('db'), team_id)
-      .then((sets: any) => {
+      .then((sets) => {
         if (!sets) {
           logger.error('Failed get sets for teams!');
           return res.status(404).json({
@@ -219,16 +158,16 @@ AllRouter.route('/:team_id/sets') // Gets the Sets for an individual Team, used 
           });
         }
         logger.info('Successful get sets for individual team!');
-        res.json(sets.map((set: Set) => sanitizeSet(set)));
+        res.json(sets.map((set) => sanitizeSet(set)));
       })
       .catch(next);
   });
 
 AllRouter.route('/set/:set_id') // Get a team by it's ID
-  .get((req: Request, res: Response, next: NextFunction) => {
+  .get((req, res, next) => {
     const { set_id } = req.params;
     AllService.getSetById(req.app.get('db'), set_id)
-      .then((set: any) => {
+      .then((set) => {
         if (!set[0]) {
           logger.error(`Failed get set with id: ${set_id}`);
           return res.status(404).json({

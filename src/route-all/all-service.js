@@ -1,6 +1,5 @@
-export {};
 const AllService = {
-  getTeamById(db: any, team_id: number) {
+  getTeamById(db, team_id) {
     // GET /:team_id
     return db
       .from('teams')
@@ -21,7 +20,7 @@ const AllService = {
       .where('teams.id', '=', `${team_id}`);
   },
 
-  getTeamsForIndividualFolder(db: any, folder_id: number) {
+  getTeamsForIndividualFolder(db, folder_id) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -40,7 +39,7 @@ const AllService = {
       .where('teams.folder_id', '=', `${folder_id}`);
   },
 
-  getSetById(db: any, set_id: number) {
+  getSetById(db, set_id) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -86,7 +85,7 @@ const AllService = {
       .where('sets.id', '=', `${set_id}`);
   },
 
-  getSetsForIndividualTeam(db: any, team_id: number) {
+  getSetsForIndividualTeam(db, team_id) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -132,7 +131,7 @@ const AllService = {
       .where('sets.team_id', '=', `${team_id}`);
   },
 
-  getFavorites(db: any, team_id: number) {
+  getFavorites(db, team_id) {
     // GET /:team_id
     return db
       .select()
@@ -145,7 +144,7 @@ const AllService = {
   },
 
   // only called upon opening of the Home public view WORKS, combine with below to get full PUBLIC TEAMS!
-  getTenTeamsDefault(db: any, page: number) {
+  getTenTeamsDefault(db, page) {
     const teamsAmt = 10;
     const offset = teamsAmt * (page - 1);
     return db
@@ -169,7 +168,7 @@ const AllService = {
       .offset(`${offset}`);
   },
 
-  getLikesforATeam(db: any, team_id: number) {
+  getLikesforATeam(db, team_id) {
     return db
       .from('favorites')
       .select()
@@ -179,12 +178,12 @@ const AllService = {
 
   // We took out the get sets for 10 teams, because the other one is chained.
 
-  getTenTeamsWithSearch(db: any, page: number, sort: string, species: string) {
+  getTenTeamsWithSearch(db, page, sort, species) {
     // GET search?page=1&sort=newest&species=all
     if (species === 'all' || species === '') {
       const teamsAmt = 10;
       const offset = teamsAmt * (page - 1);
-      let sortVar: any[] | string = [];
+      let sortVar = [];
 
       switch (sort) {
         case 'newest':
@@ -230,7 +229,7 @@ const AllService = {
     } else {
       const teamsAmt = 10;
       const offset = teamsAmt * (page - 1);
-      let sortVar: any[] | string = [];
+      let sortVar = [];
       let speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
 
       switch (sort) {

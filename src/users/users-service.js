@@ -1,17 +1,16 @@
 const bcrypt = require('bcryptjs');
 const xss = require('xss');
-const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[*.!@$%^&(){}[\]:;<>,\.\?\~_+-=|])[\S]+/;
+const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[*.!@$%^&(){}[\]:;<>,.?~_+-=|])[\S]+/;
 const config = require('../config');
 // Nodejs encryption with CTR
 const CryptoJS = require('crypto-js');
-const AES = require('crypto-js/aes');
 
 const UsersService = {
   hasUserWithUserName(db, user_name) {
     return db('users')
       .where({ user_name })
       .first()
-      .then(user => !!user);
+      .then((user) => !!user);
   },
   insertUser(db, newUser) {
     return db
@@ -43,11 +42,13 @@ const UsersService = {
   hashPassword(password) {
     return bcrypt.hash(password, 12);
   },
-  encrypt(text) { // returns an encrypted string, for later
+  encrypt(text) {
+    // returns an encrypted string, for later
     return CryptoJS.AES.encrypt(text, config.ENCRYPTION_KEY).toString();
   },
 
-  decrypt(encrypted) { // returns the decrypted text, for later
+  decrypt(encrypted) {
+    // returns the decrypted text, for later
     const bytes = CryptoJS.AES.decrypt(encrypted, config.ENCRYPTION_KEY);
     return bytes.toString(CryptoJS.enc.Utf8);
   },

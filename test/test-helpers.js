@@ -93,7 +93,7 @@ function makeFixtures() {
 /* Next, Make a clean table that truncates all the tables in your 
 test db and RESTART IDENTIY CASCADE at the end*/
 
-function cleanTables(db: any) {
+function cleanTables(db) {
   return db.raw(
     `TRUNCATE
       users,
@@ -109,8 +109,8 @@ function cleanTables(db: any) {
 a seedUsers function already made for you below, as well as the 
 AuthHeader function*/
 
-function seedUsers(db: any, users: any) {
-  const hashedUsers = users.map((user: any) => {
+function seedUsers(db, users) {
+  const hashedUsers = users.map((user) => {
     return {
       ...user,
       password: bcrypt.hashSync(user.password, 1),
@@ -122,13 +122,7 @@ function seedUsers(db: any, users: any) {
     .then(() => {});
 }
 
-function seedOtherTables(
-  db: any,
-  users: any,
-  folders: any,
-  teams: any,
-  sets: any
-) {
+function seedOtherTables(db, users, folders, teams, sets) {
   return seedUsers(db, users)
     .then(() => db.into('folders').insert(folders))
     .then(() => db.into('teams').insert(teams))
@@ -137,7 +131,7 @@ function seedOtherTables(
 
 // rest of seeding
 
-function makeAuthHeader(user: any, secret = process.env.JWT_SECRET) {
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
   const token = jwt.sign({}, secret, {
     subject: user.user_name,
     algorithm: 'HS256',

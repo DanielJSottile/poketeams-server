@@ -1,15 +1,15 @@
 const BuildService = {
   // GET
 
-  getSingleUserFolderById(db: any, folder_id: number) {
+  getSingleUserFolderById(db, folder_id) {
     return db.select().from('folders').where('folders.id', '=', `${folder_id}`);
   },
 
-  getUserFolders(db: any, user_id: number) {
+  getUserFolders(db, user_id) {
     return db.select().from('folders').where('user_id', '=', `${user_id}`);
   },
 
-  getUserTeams(db: any, user_id: number) {
+  getUserTeams(db, user_id) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -29,7 +29,7 @@ const BuildService = {
       .where('folders.user_id', '=', `${user_id}`);
   },
 
-  getUserSets(db: any, user_id: number) {
+  getUserSets(db, user_id) {
     return db
       .from('teams')
       .join('sets', 'sets.team_id', '=', 'teams.id')
@@ -76,14 +76,9 @@ const BuildService = {
       .where('folders.user_id', '=', `${user_id}`);
   },
 
-  getUserFoldersFilter(
-    db: any,
-    user_id: number,
-    sort: string,
-    species: string
-  ) {
+  getUserFoldersFilter(db, user_id, sort, species) {
     if (species === 'all' || species === '') {
-      let sortVar: any[] | string = [];
+      let sortVar = [];
 
       switch (sort) {
         case 'newest':
@@ -124,7 +119,7 @@ const BuildService = {
         .where('users.id', '=', `${user_id}`)
         .orderBy(sortVar[0], sortVar[1]);
     } else {
-      let sortVar: any[] | string = [];
+      let sortVar = [];
       let speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
 
       switch (sort) {
@@ -169,9 +164,9 @@ const BuildService = {
     }
   },
 
-  getUserTeamsFilter(db: any, user_id: number, sort: string, species: string) {
+  getUserTeamsFilter(db, user_id, sort, species) {
     if (species === 'all' || species === '') {
-      let sortVar: any[] | string = [];
+      let sortVar = [];
 
       switch (sort) {
         case 'newest':
@@ -214,7 +209,7 @@ const BuildService = {
         .where('folders.user_id', '=', `${user_id}`)
         .orderBy(sortVar[0], sortVar[1]);
     } else {
-      let sortVar: any[] | string = [];
+      let sortVar = [];
       let speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
 
       switch (sort) {
@@ -261,9 +256,9 @@ const BuildService = {
     }
   },
 
-  getUserSetsFilter(db: any, user_id: number, sort: string, species: string) {
+  getUserSetsFilter(db, user_id, sort, species) {
     if (species === 'all' || species === '') {
-      let sortVar: any[] | string = [];
+      let sortVar = [];
 
       switch (sort) {
         case 'newest':
@@ -331,7 +326,7 @@ const BuildService = {
         .where('folders.user_id', '=', `${user_id}`)
         .orderBy(sortVar[0], sortVar[1]);
     } else {
-      let sortVar: any[] | string = [];
+      let sortVar = [];
       let speciesVar = ['sets.species', 'ILIKE', `%${species}%`];
 
       switch (sort) {
@@ -405,63 +400,63 @@ const BuildService = {
 
   // POST
 
-  postUserFolder(db: any, newFolder: any) {
+  postUserFolder(db, newFolder) {
     return db
       .insert(newFolder)
       .into('folders')
       .returning('*')
-      .then((rows: any) => rows[0]);
+      .then((rows) => rows[0]);
   },
 
-  postUserTeam(db: any, newTeam: any) {
+  postUserTeam(db, newTeam) {
     return db
       .insert(newTeam)
       .into('teams')
       .returning('*')
-      .then((rows: any) => rows[0]);
+      .then((rows) => rows[0]);
   },
 
-  postUserSet(db: any, newSet: any) {
+  postUserSet(db, newSet) {
     return db
       .insert(newSet)
       .into('sets')
       .returning('*')
-      .then((rows: any) => rows[0]);
+      .then((rows) => rows[0]);
   },
 
-  patchUserFolder(db: any, id: number, newFolder: any) {
+  patchUserFolder(db, id, newFolder) {
     return db('folders')
       .where({ id })
       .update(newFolder)
       .returning('*')
-      .then((rows: any) => rows[0]);
+      .then((rows) => rows[0]);
   },
 
-  patchUserTeam(db: any, id: number, newTeam: any) {
+  patchUserTeam(db, id, newTeam) {
     return db('teams')
       .where({ id })
       .update(newTeam)
       .returning('*')
-      .then((rows: any) => rows[0]);
+      .then((rows) => rows[0]);
   },
 
-  patchUserSet(db: any, id: number, newSet: any) {
+  patchUserSet(db, id, newSet) {
     return db('sets')
       .where({ id })
       .update(newSet)
       .returning('*')
-      .then((rows: any) => rows[0]);
+      .then((rows) => rows[0]);
   },
 
-  deleteUserFolder(db: any, id: number) {
+  deleteUserFolder(db, id) {
     return db('folders').where('folders.id', '=', `${id}`).del();
   },
 
-  deleteUserTeam(db: any, id: number) {
+  deleteUserTeam(db, id) {
     return db('teams').where('teams.id', '=', `${id}`).del();
   },
 
-  deleteUserSet(db: any, id: number) {
+  deleteUserSet(db, id) {
     return db('sets').where('sets.id', '=', `${id}`).del();
   },
 };

@@ -1,8 +1,6 @@
 /* eslint-disable no-console */
-export {};
 require('dotenv').config();
 const express = require('express');
-import { Request, Response, NextFunction } from 'express';
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -31,12 +29,7 @@ app.use('/api/users', UserRouter), app.use('/api/auth', AuthRouter);
 
 // errorHandler middleware
 
-app.use(function errorHandler(
-  error: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+app.use(function errorHandler(error, req, res) {
   let response;
   if (NODE_ENV === 'production') {
     response = { error: { message: 'server error' } };
