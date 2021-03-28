@@ -6,4 +6,5 @@ node_modules
 server.pass.key
 server.key
 server.csr
+server.crt
 info.log
