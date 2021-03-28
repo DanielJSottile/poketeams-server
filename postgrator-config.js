@@ -7,7 +7,6 @@ module.exports = {
       ? process.env.DB_TEST_URL
       : process.env.DATABASE_URL,
   ssl: {
-    sslmode: 'require',
     rejectUnauthorized: false,
   },
 };

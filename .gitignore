@@ -3,4 +3,7 @@ node_modules
 .env
 .vscode-janus-debug
 .vscode
+server.pass.key
+server.key
+server.csr
 info.log
