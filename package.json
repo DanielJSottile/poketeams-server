@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
-    "test": "nyc mocha --require ts-node/register test/setup.ts",
+    "test": "nyc mocha --require ts-node/register test/**.spec.ts",
     "dev": "nodemon src/server.ts",
     "start": "node src/server.ts",
     "predeploy": "yarn audit",
