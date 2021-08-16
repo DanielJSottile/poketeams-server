@@ -97,7 +97,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            expect(res.body).to.be.an('array');
           });
       });
       it('Gets the folders for a user id', () => {
@@ -359,7 +359,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            expect(res.body).to.be.an('array');
           });
       });
       it('When Empty Gets the folders for a user id', () => {

@@ -22,17 +22,15 @@ BuildRouter.route('/folder/:folder_id') // Get a single Folder by ID
   .get((req, res, next) => {
     const { folder_id } = req.params;
     BuildService.getSingleUserFolderById(req.app.get('db'), folder_id)
-      .then((folder: PokemonFolder[]) => {
-        if (!folder) {
+      .then((folders: PokemonFolder[]) => {
+        if (!folders) {
           logger.error(`Failed get folder with id: ${folder_id}`);
           return res.status(404).json({
             error: { message: "folder doesn't exist" },
           });
         }
-        logger.info(
-          `Successful get : folder ${folder[0].folder_name} was retrieved with id: ${folder[0].id}`
-        );
-        res.json(sanitizeFolder(folder[0]));
+        logger.info(`Successful get : folder`);
+        res.json(folders.map((folder) => sanitizeFolder(folder)));
       })
       .catch(next);
   })
