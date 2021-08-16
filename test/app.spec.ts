@@ -1,13 +1,15 @@
-/* as with all other files, you'll have to change some of the
-default names */
+import knex from 'knex';
+import dotenv from 'dotenv';
+import app from '../src/app';
+import helpers from './test-helpers';
+import supertest from 'supertest';
+import expect from 'chai';
 
-require('dotenv').config();
-const app = require('../src/app');
-const knex = require('knex');
-const helpers = require('./test-helpers');
+dotenv.config();
+const chaiExpect = expect as any;
 
 describe.only('Everything', () => {
-  let testDB;
+  let testDB: knex<any, unknown[]>;
 
   const {
     testFolders,
@@ -55,7 +57,7 @@ describe.only('Everything', () => {
           .get('/api/all/search?page=1&sort=newest&species=all')
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('Gets a team by its id', () => {
@@ -63,7 +65,7 @@ describe.only('Everything', () => {
           .get('/api/all/1')
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            chaiExpect(res.body).to.be.an('object');
           });
       });
       it('Gets a set by its id', () => {
@@ -71,7 +73,7 @@ describe.only('Everything', () => {
           .get('/api/all/set/1')
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            chaiExpect(res.body).to.be.an('object');
           });
       });
       it('Gets the sets for a specific team by id', () => {
@@ -79,7 +81,7 @@ describe.only('Everything', () => {
           .get('/api/all/1/sets')
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
     });
@@ -91,7 +93,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            chaiExpect(res.body).to.be.an('object');
           });
       });
       it('Gets the folders for a user id', () => {
@@ -100,7 +102,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('Gets the folders for a user id when filtered by basic filter', () => {
@@ -109,7 +111,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('Gets the teams for a user id', () => {
@@ -118,7 +120,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('Gets the teams for a user id when filtered by basic filter', () => {
@@ -127,7 +129,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('Gets the sets for a user id', () => {
@@ -136,7 +138,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('Gets the sets for a user id when filtered by basic filter', () => {
@@ -145,7 +147,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
     });
@@ -159,7 +161,7 @@ describe.only('Everything', () => {
           .send(newfolder)
           .expect(201)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            chaiExpect(res.body).to.be.an('object');
           });
       });
       it('Posts a new team by user id', () => {
@@ -174,7 +176,7 @@ describe.only('Everything', () => {
           .send(newTeam)
           .expect(201)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            chaiExpect(res.body).to.be.an('object');
           });
       });
       it('Posts a new set by user id', () => {
@@ -212,7 +214,7 @@ describe.only('Everything', () => {
           .send(newSet)
           .expect(201)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            chaiExpect(res.body).to.be.an('object');
           });
       });
     });
@@ -330,7 +332,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.eql([]); // needs some fixing I think
+            chaiExpect(res.body).to.eql([]); // needs some fixing I think
           });
       });
       it('When Empty Gets a team by its id', () => {
@@ -341,7 +343,7 @@ describe.only('Everything', () => {
           .get('/api/all/1/sets')
           .expect(200)
           .then((res) => {
-            expect(res.body).to.eql([]);
+            chaiExpect(res.body).to.eql([]);
           });
       });
     });
@@ -353,7 +355,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            chaiExpect(res.body).to.be.an('object');
           });
       });
       it('When Empty Gets the folders for a user id', () => {
@@ -362,7 +364,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('When Empty Gets the folders for a user id when filtered by basic filter', () => {
@@ -371,7 +373,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('When Empty Gets the teams for a user id', () => {
@@ -380,7 +382,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('When Empty Gets the teams for a user id when filtered by basic filter', () => {
@@ -389,7 +391,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('When Empty Gets the sets for a user id', () => {
@@ -398,7 +400,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
       it('When Empty Gets the sets for a user id when filtered by basic filter', () => {
@@ -407,7 +409,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('array');
+            chaiExpect(res.body).to.be.an('array');
           });
       });
     });

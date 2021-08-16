@@ -1,6 +1,16 @@
-const AuthService = require('../auth/auth-service');
+import AuthService from '../auth/auth-service';
+import { Request, Response, NextFunction } from 'express';
+import { UserType } from '../@types';
 
-function requireAuth(req, res, next) {
+interface AuthRequest extends Request {
+  user?: UserType;
+}
+
+export default function requireAuth(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
   const authToken = req.get('Authorization') || '';
 
   let bearerToken;
@@ -14,13 +24,13 @@ function requireAuth(req, res, next) {
     const payload = AuthService.verifyJwt(bearerToken);
 
     AuthService.getUserWithUserName(req.app.get('db'), payload.sub)
-      .then((user) => {
+      .then((user: UserType) => {
         if (!user)
           return res.status(401).json({ error: 'Unauthorized request' });
         req.user = user;
         next();
       })
-      .catch((err) => {
+      .catch((err: string) => {
         // eslint-disable-next-line no-console
         console.error(err);
         next(err);
@@ -29,7 +39,3 @@ function requireAuth(req, res, next) {
     res.status(401).json({ error: 'Unauthorized request' });
   }
 }
-
-module.exports = {
-  requireAuth,
-};

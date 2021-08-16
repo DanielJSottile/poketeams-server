@@ -1,6 +1,7 @@
-const express = require('express');
-const path = require('path');
-const UsersService = require('./users-service');
+import express from 'express';
+import path from 'path';
+import UsersService from './users-service';
+import { UserType } from '../@types';
 
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -21,28 +22,30 @@ usersRouter.post('/', jsonBodyParser, (req, res, next) => {
   if (passwordError) return res.status(400).json({ error: passwordError });
 
   UsersService.hasUserWithUserName(req.app.get('db'), user_name)
-    .then((hasUserWithUserName) => {
+    .then((hasUserWithUserName: boolean) => {
       if (hasUserWithUserName)
         return res.status(400).json({ error: 'Username already taken' });
 
-      return UsersService.hashPassword(password).then((hashedPassword) => {
-        const newUser = {
-          user_name,
-          password: hashedPassword,
-          date_created: 'now()',
-        };
+      return UsersService.hashPassword(password).then(
+        (hashedPassword: string) => {
+          const newUser = {
+            user_name,
+            password: hashedPassword,
+            date_created: 'now()',
+          };
 
-        return UsersService.insertUser(req.app.get('db'), newUser).then(
-          (user) => {
-            res
-              .status(201)
-              .location(path.posix.join(req.originalUrl, `/${user.id}`))
-              .json(UsersService.serializeUser(user));
-          }
-        );
-      });
+          return UsersService.insertUser(req.app.get('db'), newUser).then(
+            (user: UserType) => {
+              res
+                .status(201)
+                .location(path.posix.join(req.originalUrl, `/${user.id}`))
+                .json(UsersService.serializeUser(user));
+            }
+          );
+        }
+      );
     })
     .catch(next);
 });
 
-module.exports = usersRouter;
+export default usersRouter;

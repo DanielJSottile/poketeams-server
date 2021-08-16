@@ -1,15 +1,26 @@
+import knex from 'knex';
+import { ParsedQs } from 'qs';
+import {
+  PostPokemonFolder,
+  PatchPokemonSet,
+  PatchPokemonFolder,
+  PatchPokemonTeam,
+  PokemonSet,
+  PokemonTeam,
+} from '../@types';
+
 const BuildService = {
   // GET
 
-  getSingleUserFolderById(db, folder_id) {
+  getSingleUserFolderById(db: knex<any, unknown[]>, folder_id: string) {
     return db.select().from('folders').where('folders.id', '=', `${folder_id}`);
   },
 
-  getUserFolders(db, user_id) {
+  getUserFolders(db: knex<any, unknown[]>, user_id: string) {
     return db.select().from('folders').where('user_id', '=', `${user_id}`);
   },
 
-  getUserTeams(db, user_id) {
+  getUserTeams(db: knex<any, unknown[]>, user_id: string) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -29,7 +40,7 @@ const BuildService = {
       .where('folders.user_id', '=', `${user_id}`);
   },
 
-  getUserSets(db, user_id) {
+  getUserSets(db: knex<any, unknown[]>, user_id: string) {
     return db
       .from('teams')
       .join('sets', 'sets.team_id', '=', 'teams.id')
@@ -76,7 +87,12 @@ const BuildService = {
       .where('folders.user_id', '=', `${user_id}`);
   },
 
-  getUserFoldersFilter(db, user_id, sort, species) {
+  getUserFoldersFilter(
+    db: knex<any, unknown[]>,
+    user_id: string,
+    sort: string | ParsedQs | string[] | ParsedQs[] | undefined,
+    species: string | ParsedQs | string[] | ParsedQs[] | undefined
+  ) {
     if (species === 'all' || species === '') {
       let sortVar = [];
 
@@ -93,9 +109,9 @@ const BuildService = {
         case 'rev alphabetical':
           sortVar = ['folders.folder_name', 'desc'];
           break;
-        case 'most likes':
-          sortVar = 'do not know yet'; // do not know yet
-          break;
+        // case 'most likes':
+        //   sortVar = 'do not know yet'; // do not know yet
+        //   break;
         default:
           sortVar = ['folders.date_created', 'desc'];
       }
@@ -135,9 +151,9 @@ const BuildService = {
         case 'rev alphabetical':
           sortVar = ['folders.folder_name', 'desc'];
           break;
-        case 'most likes':
-          sortVar = 'do not know yet'; // do not know yet
-          break;
+        // case 'most likes':
+        //   sortVar = 'do not know yet'; // do not know yet
+        //   break;
         default:
           sortVar = ['folders.date_created', 'desc'];
       }
@@ -164,7 +180,12 @@ const BuildService = {
     }
   },
 
-  getUserTeamsFilter(db, user_id, sort, species) {
+  getUserTeamsFilter(
+    db: knex<any, unknown[]>,
+    user_id: string,
+    sort: string | ParsedQs | string[] | ParsedQs[] | undefined,
+    species: string | ParsedQs | string[] | ParsedQs[] | undefined
+  ) {
     if (species === 'all' || species === '') {
       let sortVar = [];
 
@@ -181,9 +202,9 @@ const BuildService = {
         case 'rev alphabetical':
           sortVar = ['team_name', 'desc'];
           break;
-        case 'most likes':
-          sortVar = 'do not know yet'; // do not know yet
-          break;
+        // case 'most likes':
+        //   sortVar = 'do not know yet'; // do not know yet
+        //   break;
         default:
           sortVar = ['sets.team_id', 'desc'];
       }
@@ -225,9 +246,9 @@ const BuildService = {
         case 'rev alphabetical':
           sortVar = ['team_name', 'desc'];
           break;
-        case 'most likes':
-          sortVar = 'do not know yet'; // do not know yet
-          break;
+        // case 'most likes':
+        //   sortVar = 'do not know yet'; // do not know yet
+        //   break;
         default:
           sortVar = ['sets.team_id', 'desc'];
       }
@@ -256,7 +277,12 @@ const BuildService = {
     }
   },
 
-  getUserSetsFilter(db, user_id, sort, species) {
+  getUserSetsFilter(
+    db: knex<any, unknown[]>,
+    user_id: string,
+    sort: string | ParsedQs | string[] | ParsedQs[] | undefined,
+    species: string | ParsedQs | string[] | ParsedQs[] | undefined
+  ) {
     if (species === 'all' || species === '') {
       let sortVar = [];
 
@@ -273,9 +299,9 @@ const BuildService = {
         case 'rev alphabetical':
           sortVar = ['team_name', 'desc'];
           break;
-        case 'most likes':
-          sortVar = 'do not know yet'; // do not know yet
-          break;
+        // case 'most likes':
+        //   sortVar = 'do not know yet'; // do not know yet
+        //   break;
         default:
           sortVar = ['sets.team_id', 'desc'];
       }
@@ -342,9 +368,9 @@ const BuildService = {
         case 'rev alphabetical':
           sortVar = ['team_name', 'desc'];
           break;
-        case 'most likes':
-          sortVar = 'do not know yet'; // do not know yet
-          break;
+        // case 'most likes':
+        //   sortVar = 'do not know yet'; // do not know yet
+        //   break;
         default:
           sortVar = ['sets.team_id', 'desc'];
       }
@@ -400,7 +426,7 @@ const BuildService = {
 
   // POST
 
-  postUserFolder(db, newFolder) {
+  postUserFolder(db: knex<any, unknown[]>, newFolder: PostPokemonFolder) {
     return db
       .insert(newFolder)
       .into('folders')
@@ -408,7 +434,7 @@ const BuildService = {
       .then((rows) => rows[0]);
   },
 
-  postUserTeam(db, newTeam) {
+  postUserTeam(db: knex<any, unknown[]>, newTeam: PokemonTeam) {
     return db
       .insert(newTeam)
       .into('teams')
@@ -416,7 +442,7 @@ const BuildService = {
       .then((rows) => rows[0]);
   },
 
-  postUserSet(db, newSet) {
+  postUserSet(db: knex<any, unknown[]>, newSet: PokemonSet) {
     return db
       .insert(newSet)
       .into('sets')
@@ -424,7 +450,11 @@ const BuildService = {
       .then((rows) => rows[0]);
   },
 
-  patchUserFolder(db, id, newFolder) {
+  patchUserFolder(
+    db: knex<any, unknown[]>,
+    id: string,
+    newFolder: PatchPokemonFolder
+  ) {
     return db('folders')
       .where({ id })
       .update(newFolder)
@@ -432,7 +462,11 @@ const BuildService = {
       .then((rows) => rows[0]);
   },
 
-  patchUserTeam(db, id, newTeam) {
+  patchUserTeam(
+    db: knex<any, unknown[]>,
+    id: string,
+    newTeam: PatchPokemonTeam
+  ) {
     return db('teams')
       .where({ id })
       .update(newTeam)
@@ -440,7 +474,7 @@ const BuildService = {
       .then((rows) => rows[0]);
   },
 
-  patchUserSet(db, id, newSet) {
+  patchUserSet(db: knex<any, unknown[]>, id: string, newSet: PatchPokemonSet) {
     return db('sets')
       .where({ id })
       .update(newSet)
@@ -448,17 +482,17 @@ const BuildService = {
       .then((rows) => rows[0]);
   },
 
-  deleteUserFolder(db, id) {
+  deleteUserFolder(db: knex<any, unknown[]>, id: string) {
     return db('folders').where('folders.id', '=', `${id}`).del();
   },
 
-  deleteUserTeam(db, id) {
+  deleteUserTeam(db: knex<any, unknown[]>, id: string) {
     return db('teams').where('teams.id', '=', `${id}`).del();
   },
 
-  deleteUserSet(db, id) {
+  deleteUserSet(db: knex<any, unknown[]>, id: string) {
     return db('sets').where('sets.id', '=', `${id}`).del();
   },
 };
 
-module.exports = BuildService;
+export default BuildService;
