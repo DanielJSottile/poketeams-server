@@ -1,1 +1,1 @@
-web: node src/server.js
+web: yarn src/server.ts
