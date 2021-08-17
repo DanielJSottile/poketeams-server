@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "build": "tsc && yarn start",
-    "start": "node dist/server.js",
+    "start": "ts-node dist/server.js",
     "delete": "rmdir dist /s /q",
     "postinstall": "tsc",
     "watch-node": "nodemon dist/server.js",
