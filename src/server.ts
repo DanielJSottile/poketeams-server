@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
-const app = require('./app');
-const knex = require('knex');
-const { PORT, DATABASE_URL } = require('./config');
+
+import app from './app';
+import knex from 'knex';
+import config from './config';
+const { PORT, DATABASE_URL } = config;
 
 const db = knex({
   client: 'pg',

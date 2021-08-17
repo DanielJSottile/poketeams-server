@@ -1,8 +1,13 @@
-const express = require('express');
+import express, { Request } from 'express';
+import AuthService from './auth-service';
+import requireAuth from '../middleware/jwt-auth';
+import { UserType } from '../@types';
 const jsonBodyParser = express.json();
-const AuthService = require('./auth-service');
-const { requireAuth } = require('../middleware/jwt-auth');
 const authRouter = express.Router();
+
+interface AuthRequest extends Request {
+  user?: UserType;
+}
 
 authRouter.post('/login', jsonBodyParser, (req, res, next) => {
   const { user_name, password } = req.body;
@@ -16,7 +21,7 @@ authRouter.post('/login', jsonBodyParser, (req, res, next) => {
       });
 
   AuthService.getUserWithUserName(req.app.get('db'), loginUser.user_name)
-    .then((user) => {
+    .then((user: UserType) => {
       if (!user) {
         return res
           .status(400)
@@ -25,7 +30,7 @@ authRouter.post('/login', jsonBodyParser, (req, res, next) => {
       return AuthService.comparePasswords(
         loginUser.password,
         user.password
-      ).then((isMatch) => {
+      ).then((isMatch: boolean) => {
         if (!isMatch) {
           return res
             .status(400)
@@ -39,12 +44,12 @@ authRouter.post('/login', jsonBodyParser, (req, res, next) => {
     .catch(next);
 });
 
-authRouter.post('/refresh', requireAuth, (req, res) => {
-  const sub = req.user.user_name;
-  const payload = { user_id: req.user.id };
+authRouter.post('/refresh', requireAuth, (req: AuthRequest, res) => {
+  const sub = req.user?.user_name || '';
+  const payload = { user_id: req.user?.id };
   res.send({
     authToken: AuthService.createJwt(sub, payload),
   });
 });
 
-module.exports = authRouter;
+export default authRouter;

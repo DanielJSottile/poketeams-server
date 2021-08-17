@@ -1,25 +1,27 @@
-const bcrypt = require('bcryptjs');
-const xss = require('xss');
+import bcrypt from 'bcryptjs';
+import xss from 'xss';
+import CryptoJS from 'crypto-js';
+import config from '../config';
+import { UserType, NewUserType } from '../@types';
+
 const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[*.!@$%^&(){}[\]:;<>,.?~_+-=|])[\S]+/;
-const config = require('../config');
-// Nodejs encryption with CTR
-const CryptoJS = require('crypto-js');
+const { ENCRYPTION_KEY } = config;
 
 const UsersService = {
-  hasUserWithUserName(db, user_name) {
+  hasUserWithUserName(db: any, user_name: string) {
     return db('users')
       .where({ user_name })
       .first()
-      .then((user) => !!user);
+      .then((user: UserType) => !!user);
   },
-  insertUser(db, newUser) {
+  insertUser(db: any, newUser: NewUserType) {
     return db
       .insert(newUser)
       .into('users')
       .returning('*')
-      .then(([user]) => user);
+      .then(([user]: [UserType]) => user);
   },
-  validatePassword(password) {
+  validatePassword(password: string) {
     if (password.length < 8) {
       return `Password is too short.  Must be longer than 8 characters.
       Password cannot start or end with empty spaces.
@@ -39,20 +41,20 @@ const UsersService = {
     }
     return null;
   },
-  hashPassword(password) {
+  hashPassword(password: string) {
     return bcrypt.hash(password, 12);
   },
-  encrypt(text) {
+  encrypt(text: string) {
     // returns an encrypted string, for later
-    return CryptoJS.AES.encrypt(text, config.ENCRYPTION_KEY).toString();
+    return CryptoJS.AES.encrypt(text, ENCRYPTION_KEY).toString();
   },
 
-  decrypt(encrypted) {
+  decrypt(encrypted: string) {
     // returns the decrypted text, for later
-    const bytes = CryptoJS.AES.decrypt(encrypted, config.ENCRYPTION_KEY);
+    const bytes = CryptoJS.AES.decrypt(encrypted, ENCRYPTION_KEY);
     return bytes.toString(CryptoJS.enc.Utf8);
   },
-  serializeUser(user) {
+  serializeUser(user: UserType) {
     return {
       id: user.id,
       user_name: xss(user.user_name),
@@ -61,4 +63,4 @@ const UsersService = {
   },
 };
 
-module.exports = UsersService;
+export default UsersService;

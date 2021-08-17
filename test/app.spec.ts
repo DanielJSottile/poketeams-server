@@ -1,13 +1,19 @@
-/* as with all other files, you'll have to change some of the
-default names */
+process.env.TZ = 'UTC';
+process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = 'test-jwt-secret';
+process.env.JWT_EXPIRY = '3m';
 
-require('dotenv').config();
-const app = require('../src/app');
-const knex = require('knex');
-const helpers = require('./test-helpers');
+import knex from 'knex';
+import dotenv from 'dotenv';
+import app from '../src/app';
+import helpers from './test-helpers';
+import { expect } from 'chai';
+import supertest from 'supertest';
+
+dotenv.config();
 
 describe.only('Everything', () => {
-  let testDB;
+  let testDB: knex<any, unknown[]>;
 
   const {
     testFolders,
@@ -91,7 +97,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            expect(res.body).to.be.an('array');
           });
       });
       it('Gets the folders for a user id', () => {
@@ -353,7 +359,7 @@ describe.only('Everything', () => {
           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .then((res) => {
-            expect(res.body).to.be.an('object');
+            expect(res.body).to.be.an('array');
           });
       });
       it('When Empty Gets the folders for a user id', () => {

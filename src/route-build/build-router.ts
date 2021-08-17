@@ -1,71 +1,17 @@
-const express = require('express');
-const logger = require('../logger');
-const xss = require('xss');
-const BuildRouter = express.Router();
-const dataParser = express.json();
-const BuildService = require('./build-service');
-const AllService = require('../route-all/all-service');
-const { requireAuth } = require('../middleware/jwt-auth');
+import { Router, json } from 'express';
+import logger from '../logger';
+import requireAuth from '../middleware/jwt-auth';
+import BuildService from './build-service';
+import AllService from '../route-all/all-service';
+import {
+  sanitizeFolder,
+  sanitizeTeam,
+  sanitizeSet,
+} from '../utils/sanitization';
+import { PokemonFolder } from '../@types';
 
-// Sanitization
-
-const sanitizeFolder = (folder) => ({
-  id: folder.id,
-  folder_name: xss(folder.folder_name),
-  user_id: folder.user_id,
-  date_created: xss(folder.date_created),
-  date_modified: xss(folder.date_modified),
-});
-
-const sanitizeTeam = (team) => ({
-  id: team.id,
-  team_name: xss(team.team_name),
-  description: xss(team.description),
-  date_created: xss(team.date_created),
-  date_modified: xss(team.date_modified),
-  user_id: team.user_id,
-  user_name: xss(team.user_name),
-  folder_id: team.folder_id,
-  folder_name: xss(team.folder_name),
-});
-
-const sanitizeSet = (set) => ({
-  id: set.id,
-  team_name: xss(set.team_name),
-  description: xss(set.description),
-  date_created: xss(set.date_created),
-  date_modified: xss(set.date_modified),
-  user_id: set.user_id,
-  user_name: xss(set.user_name),
-  folder_id: set.folder_id,
-  folder_name: xss(set.folder_name),
-  nickname: xss(set.nickname),
-  species: xss(set.species),
-  gender: xss(set.gender),
-  item: xss(set.item),
-  ability: xss(set.ability),
-  level: set.level,
-  shiny: set.shiny,
-  happiness: set.happiness,
-  nature: xss(set.nature),
-  hp_ev: set.hp_ev,
-  atk_ev: set.atk_ev,
-  def_ev: set.def_ev,
-  spa_ev: set.spa_ev,
-  spd_ev: set.spd_ev,
-  spe_ev: set.spe_ev,
-  hp_iv: set.hp_iv,
-  atk_iv: set.atk_iv,
-  def_iv: set.def_iv,
-  spa_iv: set.spa_iv,
-  spd_iv: set.spd_iv,
-  spe_iv: set.spe_iv,
-  move_one: xss(set.move_one),
-  move_two: xss(set.move_two),
-  move_three: xss(set.move_three),
-  move_four: xss(set.move_four),
-  team_id: set.team_id,
-});
+const BuildRouter = Router();
+const dataParser = json();
 
 // Build Route
 
@@ -76,24 +22,22 @@ BuildRouter.route('/folder/:folder_id') // Get a single Folder by ID
   .get((req, res, next) => {
     const { folder_id } = req.params;
     BuildService.getSingleUserFolderById(req.app.get('db'), folder_id)
-      .then((folder) => {
-        if (!folder) {
+      .then((folders: PokemonFolder[]) => {
+        if (!folders) {
           logger.error(`Failed get folder with id: ${folder_id}`);
           return res.status(404).json({
             error: { message: "folder doesn't exist" },
           });
         }
-        logger.info(
-          `Successful get : folder ${folder.folder_name} was retrieved with id: ${folder.id}`
-        );
-        res.json(sanitizeFolder(folder));
+        logger.info(`Successful get : folder`);
+        res.json(folders.map((folder) => sanitizeFolder(folder)));
       })
       .catch(next);
   })
   .delete((req, res, next) => {
     const { folder_id } = req.params;
     BuildService.getSingleUserFolderById(req.app.get('db'), folder_id).then(
-      (folder) => {
+      (folder: PokemonFolder[]) => {
         if (!folder) {
           logger.error(`Failed get delete with id: ${folder_id}`);
           return res.status(404).json({
@@ -115,7 +59,7 @@ BuildRouter.route('/folders/:user_id') // Get the users folders, or post/patch a
   .get((req, res, next) => {
     const { user_id } = req.params;
     BuildService.getUserFolders(req.app.get('db'), user_id)
-      .then((folders) => {
+      .then((folders: PokemonFolder[]) => {
         if (!folders) {
           logger.error(`Failed get folders with id: ${user_id}`);
           return res.status(404).json({
@@ -144,7 +88,7 @@ BuildRouter.route('/folders/:user_id') // Get the users folders, or post/patch a
     newFolder.user_id = user_id;
 
     BuildService.postUserFolder(req.app.get('db'), newFolder)
-      .then((folder) => {
+      .then((folder: PokemonFolder) => {
         res.status(201).json(sanitizeFolder(folder));
       })
       .catch(next);
@@ -235,7 +179,7 @@ BuildRouter.route('/team/:team_id') // delete a single team
   .all(requireAuth)
   .delete((req, res, next) => {
     const { team_id } = req.params;
-    AllService.getTeamById(req.app.get('db'), Number(team_id))
+    AllService.getTeamById(req.app.get('db'), team_id)
       .then((team) => {
         if (!team) {
           logger.error(`Failed get delete with id: ${team_id}`);
@@ -243,12 +187,10 @@ BuildRouter.route('/team/:team_id') // delete a single team
             error: { message: "Team doesn't exist" },
           });
         }
-        BuildService.deleteUserTeam(req.app.get('db'), Number(team_id)).then(
-          () => {
-            logger.info('Successful delete : Team was deleted');
-            res.status(204).end();
-          }
-        );
+        BuildService.deleteUserTeam(req.app.get('db'), team_id).then(() => {
+          logger.info('Successful delete : Team was deleted');
+          res.status(204).end();
+        });
       })
       .catch(next);
   });
@@ -337,7 +279,7 @@ BuildRouter.route('/set/:team_id/:set_id') // delete a set by id
   .delete((req, res, next) => {
     const { set_id } = req.params;
     const { team_id } = req.params;
-    AllService.getSetById(req.app.get('db'), Number(set_id), Number(team_id))
+    AllService.getSetById(req.app.get('db'), set_id)
       .then((set) => {
         if (!set) {
           logger.error(`Failed get delete with id: ${set_id}`);
@@ -345,12 +287,10 @@ BuildRouter.route('/set/:team_id/:set_id') // delete a set by id
             error: { message: "Set doesn't exist" },
           });
         }
-        BuildService.deleteUserSet(req.app.get('db'), Number(set_id)).then(
-          () => {
-            logger.info('Successful delete : Set was deleted');
-            res.status(204).end();
-          }
-        );
+        BuildService.deleteUserSet(req.app.get('db'), set_id).then(() => {
+          logger.info('Successful delete : Set was deleted');
+          res.status(204).end();
+        });
       })
       .catch(next);
   });
@@ -375,4 +315,4 @@ BuildRouter.route('/sets/:user_id/filter/') // gets the user sets when filtered
       .catch(next);
   });
 
-module.exports = BuildRouter;
+export default BuildRouter;

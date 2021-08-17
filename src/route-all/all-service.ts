@@ -1,5 +1,8 @@
+import knex from 'knex';
+import { ParsedQs } from 'qs';
+
 const AllService = {
-  getTeamById(db, team_id) {
+  getTeamById(db: knex<any, unknown[]>, team_id: string) {
     // GET /:team_id
     return db
       .from('teams')
@@ -20,7 +23,7 @@ const AllService = {
       .where('teams.id', '=', `${team_id}`);
   },
 
-  getTeamsForIndividualFolder(db, folder_id) {
+  getTeamsForIndividualFolder(db: knex<any, unknown[]>, folder_id: string) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -39,7 +42,7 @@ const AllService = {
       .where('teams.folder_id', '=', `${folder_id}`);
   },
 
-  getSetById(db, set_id) {
+  getSetById(db: knex<any, unknown[]>, set_id: string) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -85,7 +88,7 @@ const AllService = {
       .where('sets.id', '=', `${set_id}`);
   },
 
-  getSetsForIndividualTeam(db, team_id) {
+  getSetsForIndividualTeam(db: knex<any, unknown[]>, team_id: string) {
     return db
       .from('teams')
       .rightJoin('folders', 'folders.id', '=', 'teams.folder_id')
@@ -131,7 +134,7 @@ const AllService = {
       .where('sets.team_id', '=', `${team_id}`);
   },
 
-  getFavorites(db, team_id) {
+  getFavorites(db: knex<any, unknown[]>, team_id: string) {
     // GET /:team_id
     return db
       .select()
@@ -144,7 +147,7 @@ const AllService = {
   },
 
   // only called upon opening of the Home public view WORKS, combine with below to get full PUBLIC TEAMS!
-  getTenTeamsDefault(db, page) {
+  getTenTeamsDefault(db: knex<any, unknown[]>, page: number) {
     const teamsAmt = 10;
     const offset = teamsAmt * (page - 1);
     return db
@@ -164,11 +167,11 @@ const AllService = {
       )
       .whereNotNull('teams.id')
       .orderBy('teams.id', 'desc')
-      .limit(`${teamsAmt}`)
-      .offset(`${offset}`);
+      .limit(teamsAmt)
+      .offset(offset);
   },
 
-  getLikesforATeam(db, team_id) {
+  getLikesforATeam(db: knex<any, unknown[]>, team_id: string) {
     return db
       .from('favorites')
       .select()
@@ -178,12 +181,17 @@ const AllService = {
 
   // We took out the get sets for 10 teams, because the other one is chained.
 
-  getTenTeamsWithSearch(db, page, sort, species) {
+  getTenTeamsWithSearch(
+    db: knex<any, unknown[]>,
+    page: number,
+    sort: string | ParsedQs | string[] | ParsedQs[] | undefined,
+    species: string | ParsedQs | string[] | ParsedQs[] | undefined
+  ) {
     // GET search?page=1&sort=newest&species=all
     if (species === 'all' || species === '') {
       const teamsAmt = 10;
       const offset = teamsAmt * (page - 1);
-      let sortVar = [];
+      let sortVar: string[] = [];
 
       switch (sort) {
         case 'newest':
@@ -198,9 +206,9 @@ const AllService = {
         case 'rev alphabetical':
           sortVar = ['team_name', 'desc'];
           break;
-        case 'most likes':
-          sortVar = 'do not know yet'; // do not know yet
-          break;
+        // case 'most likes':
+        //   sortVar = 'do not know yet'; do not know yet
+        //  break;
         default:
           sortVar = ['sets.team_id', 'desc'];
       }
@@ -224,8 +232,8 @@ const AllService = {
         )
         .whereNotNull('teams.id')
         .orderBy(sortVar[0], sortVar[1])
-        .limit(`${teamsAmt}`)
-        .offset(`${offset}`);
+        .limit(teamsAmt)
+        .offset(offset);
     } else {
       const teamsAmt = 10;
       const offset = teamsAmt * (page - 1);
@@ -245,9 +253,9 @@ const AllService = {
         case 'rev alphabetical':
           sortVar = ['team_name', 'desc'];
           break;
-        case 'most likes':
-          sortVar = 'do not know yet'; // do not know yet
-          break;
+        // case 'most likes':
+        //   sortVar = 'do not know yet'; // do not know yet
+        //   break;
         default:
           sortVar = ['sets.team_id', 'desc'];
       }
@@ -272,10 +280,10 @@ const AllService = {
         .whereNotNull('teams.id')
         .where(speciesVar[0], speciesVar[1], speciesVar[2])
         .orderBy(sortVar[0], sortVar[1])
-        .limit(`${teamsAmt}`)
-        .offset(`${offset}`);
+        .limit(teamsAmt)
+        .offset(offset);
     }
   },
 };
 
-module.exports = AllService;
+export default AllService;
