@@ -4,12 +4,7 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
-    "build": "tsc && yarn start",
-    "start": "ts-node dist/server.js",
-    "delete": "rmdir dist /s /q",
-    "postinstall": "tsc",
-    "watch-node": "nodemon dist/server.js",
-    "watch-ts": "tsc -w",
+    "start": "ts-node src/server.ts",
     "deploy": "git push heroku master",
     "test": "nyc mocha --require ts-node/register test/**.spec.ts",
     "dev": "nodemon src/server.ts",
