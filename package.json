@@ -3,12 +3,20 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.ts",
+  "engines": {
+    "node": "14.15.3"
+  },
   "scripts": {
+    "build": "tsc && yarn start",
+    "start": "node dist/server.js",
+    "delete": "rmdir dist /s /q",
+    "postinstall": "tsc",
+    "watch-node": "nodemon dist/server.js",
+    "watch-ts": "tsc -w",
+    "deploy": "git add . && git commit -m Heroku && git push heroku master",
     "test": "nyc mocha --require ts-node/register test/**.spec.ts",
     "dev": "nodemon src/server.ts",
-    "start": "ts-node src/server.ts",
     "predeploy": "yarn audit",
-    "deploy": "git push heroku master",
     "migrate": "postgrator --config postgrator-config.ts",
     "migrate:test": "NODE_ENV=test yarn migrate",
     "migrate:production": "env SSL=true DATABASE_URL=$(heroku config:get DATABASE_URL) yarn migrate"
