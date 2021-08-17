@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "start": "ts-node src/server.ts",
-    "deploy": "git push heroku master",
+    "deploy": "git push heroku main",
     "test": "nyc mocha --require ts-node/register test/**.spec.ts",
     "dev": "nodemon src/server.ts",
     "predeploy": "yarn audit",
