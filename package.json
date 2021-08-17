@@ -9,9 +9,9 @@
     "test": "nyc mocha --require ts-node/register test/**.spec.ts",
     "dev": "nodemon src/server.ts",
     "predeploy": "yarn audit",
-    "migrate": "postgrator --config postgrator-config.ts",
+    "migrate": "postgrator --config postgrator-config.js",
     "migrate:test": "NODE_ENV=test yarn migrate",
-    "migrate:production": "env SSL=true DATABASE_URL=$(heroku config:get DATABASE_URL) yarn migrate"
+    "migrate:production": "heroku run yarn migrate"
   },
   "keywords": [],
   "author": "",
@@ -30,7 +30,7 @@
     "morgan": "^1.10.0",
     "path": "^0.12.7",
     "pg": "^8.5.1",
-    "postgrator-cli": "3.1.0",
+    "postgrator-cli": "3.2.0",
     "supertest": "^4.0.2",
     "ts-node": "^10.2.0",
     "winston": "^3.2.1",
