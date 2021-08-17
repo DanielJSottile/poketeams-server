@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.ts",
-  "engines": {
-    "yarn": "14.15.3"
-  },
   "scripts": {
     "build": "tsc && yarn start",
     "start": "node dist/server.js",
