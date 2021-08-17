@@ -43,6 +43,7 @@ export type PatchPokemonSet = {
   ability: string;
   level: number;
   shiny: boolean;
+  gigantamax: boolean;
   happiness: number;
   nature: string;
   hp_ev: number;

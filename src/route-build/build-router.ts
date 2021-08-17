@@ -247,6 +247,7 @@ BuildRouter.route('/sets/:user_id') // get the user sets, post/patch a set
       ability: body.ability,
       level: body.level,
       shiny: body.shiny,
+      gigantamax: body.gigantamax,
       happiness: body.happiness,
       nature: body.nature,
       hp_ev: body.hp_ev,

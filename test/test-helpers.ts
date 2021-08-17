@@ -61,6 +61,7 @@ const helpers = {
         ability: 'Stance Change',
         level: 99,
         shiny: true,
+        gigantamax: false,
         happiness: 252,
         nature: 'Brave',
         hp_ev: 165,
