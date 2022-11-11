@@ -1,0 +1,5 @@
+/* CLEAN UP FOLDERS */
+ALTER TABLE folders DROP CONSTRAINT folders_pkey;
+ALTER TABLE folders DROP COLUMN IF EXISTS id;
+ALTER TABLE folders RENAME COLUMN folder_uuid TO id;
+ALTER TABLE folders ADD PRIMARY KEY (id);

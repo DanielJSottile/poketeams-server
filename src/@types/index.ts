@@ -5,7 +5,7 @@ export type NewUserType = {
 };
 
 export interface UserType extends NewUserType {
-  id: number;
+  id: string;
 }
 
 export type PatchPokemonFolder = {
@@ -13,11 +13,11 @@ export type PatchPokemonFolder = {
 };
 
 export interface PostPokemonFolder extends PatchPokemonFolder {
-  user_id: number;
+  user_id: string;
 }
 
 export interface PokemonFolder extends PostPokemonFolder {
-  id: number;
+  id: string;
   date_created: string;
   date_modified: string | null;
 }
@@ -28,11 +28,11 @@ export type PatchPokemonTeam = {
 };
 
 export interface PokemonTeam extends PatchPokemonTeam {
-  id: number;
+  id: string;
 
   date_created: string;
   date_modified: string | null;
-  folder_id: number;
+  folder_id: string;
 }
 
 export type PatchPokemonSet = {
@@ -65,8 +65,8 @@ export type PatchPokemonSet = {
 };
 
 export interface PokemonSet extends PatchPokemonSet {
-  id: number;
+  id: string;
   date_created: string;
   date_modified: string | null;
-  team_id: number;
+  team_id: string;
 }
